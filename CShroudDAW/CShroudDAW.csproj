@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        
+        <IsAotCompatible>true</IsAotCompatible>
+        <!--<PublishAot>true</PublishAot>-->
+        <TrimMode>link</TrimMode>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Result" Version="10.1.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.64.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Presentation\" />
+    </ItemGroup>
+
+        <ItemGroup>
+        <None Update="Binaries\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Development.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <Protobuf Include="Infrastructure\Cores\Xray\Protos\**\*.proto" GrpcServices="Client" ProtoRoot="Infrastructure/Cores/Xray/Protos/" />
+        <Protobuf Include="Presentation\Protos\**\*.proto" GrpcServices="Server" ProtoRoot="Presentation/Protos/" />
+    </ItemGroup>
+
+</Project>

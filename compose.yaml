@@ -1,0 +1,19 @@
+﻿services:
+
+  
+  database:
+    image: postgres:latest
+    container_name: csgateway_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-crshroud_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-crshroud_password}
+      POSTGRES_DB: ${DB_NAME:-crshroud_database}
+    ports:
+      - "5433:${DB_PORT}"
+    volumes:
+      - postgres_data_gateway:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_gateway:
+

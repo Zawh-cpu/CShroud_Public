@@ -1,0 +1,6 @@
+@CShroudGateway_HostAddress = http://localhost:5271
+
+GET {{CShroudGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

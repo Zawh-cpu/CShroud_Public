@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CShroudApp.Presentation.Ui.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CShroudApp.Presentation.Ui.Views.MainWindow"
+        x:DataType="viewModels:MainWindowViewModel"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="#161616"
+        Title="Keeping outside, yeah">
+    
+    <Window.Styles>
+    </Window.Styles>
+    
+    <Grid ColumnDefinitions="Auto, *">
+        <Grid RowDefinitions="Auto, *" Width="200" Background="Red">
+            <StackPanel Background="BlueViolet" Height="140"></StackPanel>
+            <StackPanel Grid.Row="1" Background="PaleVioletRed"></StackPanel>
+        </Grid>
+        
+        <Grid Grid.Column="1" RowDefinitions="Auto, *">
+            
+            <Grid ColumnDefinitions="*, Auto" Height="45" Background="AliceBlue">
+                <StackPanel Grid.Column="1" Background="Aqua">
+                    <Border ClipToBounds="True" Width="45" Height="45" Background="Red" CornerRadius="25">
+                        <Image Source="avares://CShroudApp/Assets/temp/avatar.jpg"></Image>
+                    </Border>
+                </StackPanel>
+            </Grid>
+            
+        </Grid>
+    </Grid>
+    
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    
+    
+</Window>

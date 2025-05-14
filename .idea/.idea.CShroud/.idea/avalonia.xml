@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="CShroudApp/Presentation/Ui/App.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Styles/Auth.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Views/AuthWindow.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Views/MainWindow.axaml" value="CShroudApp/CShroudApp.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

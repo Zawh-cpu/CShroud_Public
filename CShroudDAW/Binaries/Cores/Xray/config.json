@@ -1,0 +1,105 @@
+{
+    "log": {
+        "loglevel": "warning"
+    },
+    "api": {
+    	"tag": "api",
+    	"listen": "127.0.0.1:61789",
+    	"services": ["HandlerService", "LoggerService", "StatsService", "RoutingService"]
+    },
+    "inbounds": [
+        {
+            "tag": "dokodemo-in",
+            "port": 443,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1",
+                "port": 4431,
+                "network": "tcp"
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "tls"
+                ],
+                "routeOnly": true
+            }
+        },
+        {
+            "listen": "127.0.0.1",
+            "port": 4431,
+	    "tag": "inbound-Vless",
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "a4300888-ed1e-444f-a539-36721300c694",
+                        "email": "love@xray.com",
+  			"flow": "xtls-rprx-vision"
+                    }
+                ],
+                "decryption": "none"
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "reality",
+                "realitySettings": {
+                    "dest": "google.com:443",
+                    "serverNames": [
+                        "google.com",
+            		"www.google.com"
+                    ],
+                    "privateKey": "OFSOzwYyGVMQepQeeOrbR24GF84IMb4yav3ACVPrxWY",
+                    "shortIds": [
+                        "4ae60b64b5cd",
+            		"c370c39a8d58157b",
+            		"7b87059a76b335",
+            		"77",
+            		"7c67c601f7",
+            		"274c908c",
+            		"bf96",
+            		"f72a10"
+                    ]
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "routeOnly": true
+            }
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "block"
+        }
+    ],
+    "routing": {
+        "rules": [
+            {
+                "inboundTag": [
+                    "dokodemo-in"
+                ],
+                "domain": [
+                    "google.com"
+                ],
+                "outboundTag": "direct"
+            },
+            {
+                "inboundTag": [
+                    "dokodemo-in"
+                ],
+                "outboundTag": "block"
+            }
+        ]
+    }
+}

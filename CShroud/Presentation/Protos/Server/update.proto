@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "CShroud.Presentation.Protos.Server";
+
+package update;
+
+service Update {
+  rpc GetGlobalParams (GlobalParamsRequest) returns (UpdateBytes);
+}
+
+message GlobalParamsRequest {
+  string currentHash = 1;
+}
+
+message GlobalParams {
+  string ProjectName = 1;
+  string KeyDomain = 2;
+  string KeyNameFormat = 3;
+}
+
+message UpdateBytes {
+  bytes data = 1;
+}

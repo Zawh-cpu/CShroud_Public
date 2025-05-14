@@ -1,0 +1,28 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "CShroudDAW";
+
+package keyservice;
+
+import "google/protobuf/empty.proto";
+
+service KeyService {
+  rpc AddKey (AddKeyRequest) returns (google.protobuf.Empty);
+  rpc DelKey (DelKeyRequest) returns (google.protobuf.Empty);
+}
+
+// The request message containing the user's name.
+message AddKeyRequest {
+  string id = 1;
+  string protocol = 2;
+  uint32 vpnLevel = 3;
+  string options = 4;
+}
+
+
+
+// The response message containing the greetings.
+message DelKeyRequest {
+  string id = 1;
+  string protocol = 2;
+}

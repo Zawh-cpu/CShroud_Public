@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "CShroudGateway.Presentation.DeprecatedApi.gRPC.v1.Protos";
+
+package machine;
+
+import "google/protobuf/empty.proto";
+
+service Machine {
+  rpc Ping (google.protobuf.Empty) returns (PingAnswer);
+  rpc GetSysStat (google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message PingAnswer {
+  int32 status = 1;
+}

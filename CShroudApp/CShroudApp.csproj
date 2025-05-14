@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsAotCompatible>true</IsAotCompatible>
+        <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AvaloniaUseBuildAvaloniaApp>UiLoader</AvaloniaUseBuildAvaloniaApp>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Avalonia" Version="11.2.7" />
+      <PackageReference Include="Avalonia.Desktop" Version="11.2.7" />
+      <PackageReference Include="Avalonia.Diagnostics" Version="11.2.7" />
+      <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.7" />
+      <PackageReference Include="Avalonia.Native" Version="11.2.7" />
+      <PackageReference Include="Avalonia.Svg.Skia" Version="11.2.7" />
+      <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.7" />
+      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.2.25163.2" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.4" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.3" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Binaries\Cores\SingBox\LinuxX64\" />
+      <Folder Include="Presentation\Ui\Models\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Binaries\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\**">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Binaries\Cores\SingBox\Windows64\config.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Binaries\Cores\SingBox\Windows64\sing-box.exe">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Presentation\Views\MainWindow.axaml" />
+    </ItemGroup>
+</Project>

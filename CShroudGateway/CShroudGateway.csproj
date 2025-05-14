@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Result" Version="10.1.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.30.2" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.OpenApi" Version="1.6.24" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.1.17" />
+        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="8.1.1" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Infrastructure\Protos\**\*.proto" GrpcServices="Client" ProtoRoot="Infrastructure/Protos/" />
+        <Protobuf Include="Presentation\DeprecatedApi\gRPC\v1\Protos\**\*.proto" GrpcServices="Server" ProtoRoot="Presentation/DeprecatedApi/gRPC/v1/Protos/" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Presentation\Api\v1\Controllers\VpnController.Connect.cs">
+        <DependentUpon>VpnController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\PingController.Ping.cs">
+        <DependentUpon>PingController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.SignIn.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.Refresh.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\UserController.Me.cs">
+        <DependentUpon>UserController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\TelegramController.SignIn.cs">
+        <DependentUpon>TelegramController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\TelegramController.SignUp.cs">
+        <DependentUpon>TelegramController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\RateController.GetRates.cs">
+        <DependentUpon>RateController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.GetMyKeys.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\ProtocolController.GetProtocols.cs">
+        <DependentUpon>ProtocolController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.AddKey.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Application\DTOs\Keys\" />
+    </ItemGroup>
+
+</Project>
