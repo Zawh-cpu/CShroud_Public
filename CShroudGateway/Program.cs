@@ -23,6 +23,9 @@ internal static class Program
         // Add configuration
         var authConfigRaw = builder.Configuration.GetSection("AuthConfig");
         builder.Services.Configure<AuthConfig>(authConfigRaw);
+        
+        var protocolsConfigRaw = builder.Configuration.GetSection("ProtocolsConfig");
+        builder.Services.Configure<ProtocolsConfig>(protocolsConfigRaw);
 
         var authConfig = authConfigRaw.Get<AuthConfig>() ?? new AuthConfig();
         

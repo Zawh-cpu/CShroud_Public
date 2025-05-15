@@ -10,6 +10,8 @@ public class ServerKeyResponse
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public required string Location { get; set; }
+    public required string Host { get; set; }
+    public required uint Port { get; set; }
 }
 
 public class KeyResponse

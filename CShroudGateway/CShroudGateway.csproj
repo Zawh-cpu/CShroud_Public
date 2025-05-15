@@ -72,6 +72,9 @@
       <Compile Update="Presentation\Api\v1\Controllers\KeyController.AddKey.cs">
         <DependentUpon>KeyController.cs</DependentUpon>
       </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.GetMyKey.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

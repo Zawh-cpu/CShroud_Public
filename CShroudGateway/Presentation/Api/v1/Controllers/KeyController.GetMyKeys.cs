@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using CShroudGateway.Infrastructure.Data.Config;
 using CShroudGateway.Infrastructure.Data.Entities;
 using CShroudGateway.Presentation.Api.v1.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,9 @@ public partial class KeyController
                 Server = new ServerKeyResponse()
                 {
                     Id = k.ServerId,
-                    Location = k.Server!.Location
+                    Location = k.Server!.Location,
+                    Host = k.Server.IpV6Address != String.Empty ? k.Server.IpV6Address : k.Server.IpV4Address,
+                    Port = (_protocolsConfig.Connections.TryGetValue(k.Protocol, out var conData) ? conData : new ProtocolsConfig.Protocol()).Port
                 },
                 Protocol = k.Protocol,
                 UserId = k.UserId,

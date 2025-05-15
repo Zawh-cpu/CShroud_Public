@@ -40,4 +40,22 @@ public static class OftenErrors
     {
         StatusCode = 500
     };
+
+    public static readonly ObjectResult KeyNotFound = new(new
+    {
+        Status = "error",
+        Message = "Key with this Id is not found"
+    })
+    {
+        StatusCode = 404
+    };
+
+    public static readonly ObjectResult ProtocolNotFound = new(new
+    {
+        Status = "error",
+        Message = "This protocol is currently unavailable or maybe under maintenance."
+    })
+    {
+        StatusCode = 503
+    };
 }

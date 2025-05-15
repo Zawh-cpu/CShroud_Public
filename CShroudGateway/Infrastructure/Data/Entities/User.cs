@@ -1,3 +1,5 @@
+using CShroudGateway.Core.Constants;
+
 namespace CShroudGateway.Infrastructure.Data.Entities;
 
 using System.ComponentModel.DataAnnotations;
@@ -42,4 +44,11 @@ public class User
     
     public bool IsActive { get; set; } = true;
     public bool IsVerified { get; set; } = false;
+
+    public bool HasAccess(UserRights right)
+    {
+        if (this.Role is null) return false;
+
+        return (this.Role.Permissions & (1u << ((int)right - 1))) != 0;
+    }
 }
