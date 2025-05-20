@@ -88,6 +88,18 @@ public class BaseRepository : IBaseRepository
         return await _context.Users.AnyAsync(predicate);
     }
 
+    public async Task<ProtocolSettings?> GetProtocolSettingsAsync(Expression<Func<ProtocolSettings, bool>> predicate,
+        params Func<IQueryable<ProtocolSettings>, IQueryable<ProtocolSettings>>[] queryModifiers)
+    {
+        var query = _context.ProtocolsSettings.Where(predicate);
+        foreach (var modifier in queryModifiers)
+        {
+            query = modifier(query);
+        }
+        
+        return await query.FirstOrDefaultAsync();
+    }
+
     public async Task<UserWithKeys?> GetUserByIdWithKeyCountAsync(Guid userId, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers)
     {
         var query = _context.Users.Where(user => user.Id == userId);

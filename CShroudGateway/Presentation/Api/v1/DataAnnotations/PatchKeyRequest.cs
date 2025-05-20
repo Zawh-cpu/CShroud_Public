@@ -2,5 +2,5 @@
 
 public class PatchKeyRequest
 {
-    
+    public string? Name { get; set; }
 }

@@ -125,28 +125,24 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
                     b.ToTable("Mails");
                 });
 
-            modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.Protocol", b =>
+            modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.ProtocolSettings", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("ServerId")
+                        .HasColumnType("uuid");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Protocol")
+                        .HasColumnType("integer");
+
+                    b.Property<JsonDocument>("ExtraContent")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<long>("Port")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("PublicKey")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.HasKey("ServerId", "Protocol");
 
-                    b.Property<JsonDocument>("URIArgs")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Protocols");
+                    b.ToTable("ProtocolsSettings");
                 });
 
             modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.Rate", b =>
@@ -366,6 +362,17 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
                         .HasForeignKey("RecipientId");
 
                     b.Navigation("Recipient");
+                });
+
+            modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.ProtocolSettings", b =>
+                {
+                    b.HasOne("CShroudGateway.Infrastructure.Data.Entities.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Server");
                 });
 
             modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.Token", b =>

@@ -35,6 +35,9 @@ public interface IBaseRepository
     Task<Rate[]> GetRatesByExpressionAsync(Expression<Func<Rate, bool>> predicate);
     
     Task<Key[]> GetKeysByExpressionAsync(Expression<Func<Key, bool>> predicate, params Func<IQueryable<Key>, IQueryable<Key>>[] queryModifiers);
+
+    Task<ProtocolSettings?> GetProtocolSettingsAsync(Expression<Func<ProtocolSettings, bool>> predicate,
+        params Func<IQueryable<ProtocolSettings>, IQueryable<ProtocolSettings>>[] queryModifiers);
     
     Task SaveContextAsync();
 }

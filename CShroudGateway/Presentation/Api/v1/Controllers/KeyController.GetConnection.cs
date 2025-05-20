@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Ardalis.Result;
+using CShroudGateway.Application.Factories;
 using CShroudGateway.Core.Constants;
 using CShroudGateway.Core.Entities;
 using CShroudGateway.Infrastructure.Data.Entities;
@@ -15,9 +16,9 @@ namespace CShroudGateway.Presentation.Api.v1.Controllers;
 
 public partial class KeyController
 {
-    [HttpPatch("{keyId:guid}")]
+    [HttpGet("{keyId:guid}/connect")]
     [Authorize]
-    public async Task<IActionResult> PatchKeyAsync(Guid keyId, [FromBody] PatchKeyRequest request)
+    public async Task<IActionResult> GetConnectionAsync(Guid keyId)
     {
         var user = await _userService.GetUserFromContext(User, x => x.Include(u => u.Role));
         if (user?.Role is null)
@@ -27,17 +28,18 @@ public partial class KeyController
         if (key?.Server is null || (key.UserId != user.Id && !user.HasAccess(UserRights.ManageKeys)))
             return OftenErrors.KeyNotFound;
 
-        bool modified = false;
+        var sets = await _baseRepository.GetProtocolSettingsAsync(p => p.ServerId == key.ServerId && p.Protocol == key.Protocol);
+        if (sets is null)
+            return OftenErrors.ProtocolNotFound;
 
-        if (request.Name is not null)
-        {
-            key.Name = request.Name;
-            modified = true;
-        }
-
-        if (modified)
-            await _baseRepository.SaveContextAsync();
+        var creds = ProtocolConnectionFactory.CreateCredentials(sets, key, key.Server);
+        Console.WriteLine(creds);
         
-        return Ok();
+        return Ok(new KeyConnectionResponse()
+        {   
+            Id = key.Id,
+            Protocol = key.Protocol,
+            Credentials = creds
+        });
     }
 }

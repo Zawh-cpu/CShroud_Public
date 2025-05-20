@@ -75,10 +75,21 @@
       <Compile Update="Presentation\Api\v1\Controllers\KeyController.GetMyKey.cs">
         <DependentUpon>KeyController.cs</DependentUpon>
       </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Application\DTOs\Keys\" />
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.DisableKey.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.EnableKey.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.PatchKey.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.GetConnection.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\KeyController.DelKey.cs">
+        <DependentUpon>KeyController.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

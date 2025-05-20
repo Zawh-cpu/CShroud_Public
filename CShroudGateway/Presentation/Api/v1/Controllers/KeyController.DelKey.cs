@@ -15,28 +15,19 @@ namespace CShroudGateway.Presentation.Api.v1.Controllers;
 
 public partial class KeyController
 {
-    [HttpPatch("{keyId:guid}")]
+    [HttpDelete("{keyId:guid}")]
     [Authorize]
-    public async Task<IActionResult> PatchKeyAsync(Guid keyId, [FromBody] PatchKeyRequest request)
+    public async Task<IActionResult> DelKeyAsync(Guid keyId)
     {
         var user = await _userService.GetUserFromContext(User, x => x.Include(u => u.Role));
         if (user?.Role is null)
             return OftenErrors.InvalidUser;
         
         var key = await _baseRepository.GetKeyByIdAsync(keyId, x => x.Include(k => k.Server));
-        if (key?.Server is null || (key.UserId != user.Id && !user.HasAccess(UserRights.ManageKeys)))
+        if (key?.Server is null || (key.UserId != user.Id && !user.HasAccess(UserRights.DeleteKeys)))
             return OftenErrors.KeyNotFound;
 
-        bool modified = false;
-
-        if (request.Name is not null)
-        {
-            key.Name = request.Name;
-            modified = true;
-        }
-
-        if (modified)
-            await _baseRepository.SaveContextAsync();
+        await _keyService.DelKeyAsync(key);
         
         return Ok();
     }
