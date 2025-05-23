@@ -13,6 +13,8 @@ public static class OftenErrors
     
     public static readonly ForbidResult InvalidUser = new();
     
+    public static readonly ForbidResult PermissionDenied = new();
+    
     
     public static readonly ObjectResult DawServerUnavailable = new(new
     {

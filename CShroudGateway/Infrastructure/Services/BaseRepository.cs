@@ -146,6 +146,15 @@ public class BaseRepository : IBaseRepository
         
         return query.ToArrayAsync();
     }
+    
+    public Task<User[]> GetUsersByExpressionAsync(Expression<Func<User, bool>> predicate, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers)
+    {
+        var query = _context.Users.Where(predicate);
+        foreach (var modifier in queryModifiers)
+            query = modifier(query);
+        
+        return query.ToArrayAsync();
+    }
 
     public async Task<Key?> GetKeyByIdAsync(Guid keyId, params Func<IQueryable<Key>, IQueryable<Key>>[] queryModifiers)
     {

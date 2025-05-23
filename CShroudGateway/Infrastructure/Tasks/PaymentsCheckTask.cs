@@ -25,8 +25,10 @@ public class PaymentsCheckTask : IPlannedTask
         var baseRepository = scope.ServiceProvider.GetRequiredService<IBaseRepository>();
         var rateManager = scope.ServiceProvider.GetRequiredService<IRateManager>();
         var notifyManager = scope.ServiceProvider.GetRequiredService<INotificationManager>();
-
+        
         var baseRate = await baseRepository.GetFirstDefaultRateAsync();
+        var systemUser = await baseRepository.GetUserByIdAsync(ReservedUsers.System);
+        
         if (baseRate is null)
         {
             PlannedTime = currentTime.AddHours(24);
@@ -34,8 +36,10 @@ public class PaymentsCheckTask : IPlannedTask
             throw new NullReferenceException("Base repository returned null");
         }
         
-        var users = await baseRepository.GetUsersPayedUntilAsync(x => currentTime.AddDays(-3) <= x.PayedUntil && x.PayedUntil <= currentTime);
-        var expiredUsers = await baseRepository.GetUsersPayedUntilAsync(x => x.PayedUntil <= currentTime.AddDays(1), x => x.Include(u => u.Keys));
+        var users = await baseRepository.GetUsersPayedUntilAsync(x => currentTime < x.PayedUntil && x.PayedUntil <= currentTime.AddDays(3), x => x.Include(u => u.Rate));
+        Console.WriteLine(users);
+        Console.WriteLine(users.Length);
+        var expiredUsers = await baseRepository.GetUsersPayedUntilAsync(x => x.PayedUntil <= currentTime.AddDays(1), x => x.Include(u => u.Keys).Include(u => u.Rate));
 
         var notifiesLift = new List<Mail>();
 
@@ -49,7 +53,9 @@ public class PaymentsCheckTask : IPlannedTask
             {
                 Type = MailType.RateExpired,
                 SenderId = ReservedUsers.System,
-                RecipientId = user.Id
+                Sender = systemUser,
+                RecipientId = user.Id,
+                Recipient = user
             });
         }
 
@@ -64,10 +70,14 @@ public class PaymentsCheckTask : IPlannedTask
             {
                 Type = MailType.RateExpiration,
                 SenderId = ReservedUsers.System,
+                Sender = systemUser,
                 RecipientId = user.Id,
+                Recipient = user,
                 ExtraData = JsonSerializer.SerializeToDocument(new Dictionary<string, object>()
                 {
-                    ["DaysLeft"] = user.PayedUntil - currentTime
+                    ["daysLeft"] = (user.PayedUntil - currentTime).Value.Days,
+                    ["rateName"] = user.Rate!.Name,
+                    ["needsToPay"] = user.Rate.Cost,
                 })
             });
         }

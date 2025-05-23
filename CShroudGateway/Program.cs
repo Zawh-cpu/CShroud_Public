@@ -90,7 +90,7 @@ internal static class Program
             ServiceLifetime.Scoped);
 
         builder.Services.AddHttpClient("TelegramHook",
-            client => client.BaseAddress = new Uri("https://api.test.org/"));
+            client => client.BaseAddress = new Uri("http://localhost:5216"));
 
         builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 

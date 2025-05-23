@@ -38,6 +38,9 @@ public interface IBaseRepository
 
     Task<ProtocolSettings?> GetProtocolSettingsAsync(Expression<Func<ProtocolSettings, bool>> predicate,
         params Func<IQueryable<ProtocolSettings>, IQueryable<ProtocolSettings>>[] queryModifiers);
+
+    Task<User[]> GetUsersByExpressionAsync(Expression<Func<User, bool>> predicate,
+        params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers);
     
     Task SaveContextAsync();
 }

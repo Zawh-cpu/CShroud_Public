@@ -20,7 +20,10 @@ public class Mail
     public Guid? RecipientId { get; set; }
     public User? Recipient { get; set; }
 
+    [ForeignKey(nameof(Sender))]
     public Guid SenderId { get; set; }
+    
+    public User? Sender { get; set; }
 
     public MailType Type { get; set; } = MailType.Message;
     
