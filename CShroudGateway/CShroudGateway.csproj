@@ -90,6 +90,18 @@
       <Compile Update="Presentation\Api\v1\Controllers\KeyController.DelKey.cs">
         <DependentUpon>KeyController.cs</DependentUpon>
       </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\UserController.GetUsers.cs">
+        <DependentUpon>UserController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\UserController.GetById.cs">
+        <DependentUpon>UserController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\UserController.DelUser.cs">
+        <DependentUpon>UserController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\UserController.PatchById.cs">
+        <DependentUpon>UserController.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
