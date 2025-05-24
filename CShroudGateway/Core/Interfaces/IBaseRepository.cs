@@ -33,6 +33,7 @@ public interface IBaseRepository
     Task<User[]> GetUsersPayedUntilAsync(Expression<Func<User, bool>> predicate, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers);
     
     Task<Rate[]> GetRatesByExpressionAsync(Expression<Func<Rate, bool>> predicate);
+    Task<Role[]> GetRolesByExpressionAsync(Expression<Func<Role, bool>> predicate);
     
     Task<Key[]> GetKeysByExpressionAsync(Expression<Func<Key, bool>> predicate, params Func<IQueryable<Key>, IQueryable<Key>>[] queryModifiers);
 

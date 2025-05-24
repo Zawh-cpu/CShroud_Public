@@ -137,6 +137,11 @@ public class BaseRepository : IBaseRepository
     {
         return await _context.Rates.Where(predicate).ToArrayAsync();
     }
+    
+    public async Task<Role[]> GetRolesByExpressionAsync(Expression<Func<Role, bool>> predicate)
+    {
+        return await _context.Roles.Where(predicate).ToArrayAsync();
+    }
 
     public Task<Key[]> GetKeysByExpressionAsync(Expression<Func<Key, bool>> predicate, params Func<IQueryable<Key>, IQueryable<Key>>[] queryModifiers)
     {

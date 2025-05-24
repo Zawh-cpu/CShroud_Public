@@ -7,8 +7,6 @@ public partial class RateController
     [HttpGet("rates")]
     public async Task<IActionResult> GetRatesAsync()
     {
-        var twte = await _baseRepository.GetRatesByExpressionAsync(r => r.IsPrivate == false);
-        Console.WriteLine(twte);
-        return new OkObjectResult(twte);
+        return new OkObjectResult(await _baseRepository.GetRatesByExpressionAsync(r => r.IsPrivate == false));
     }
 }
