@@ -2,11 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="CShroudApp.Presentation.Ui.App"
              xmlns:local="using:CShroudApp.Presentation.Ui"
+             xmlns:vm="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <DataTemplate DataType="{x:Type vm:AuthWindowViewModel}">
+            <v:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <v:DashboardView />
+        </DataTemplate>
     </Application.DataTemplates>
   
     <Application.Styles>

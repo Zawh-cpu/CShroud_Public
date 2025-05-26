@@ -1,13 +1,21 @@
 using CShroudApp.Presentation.Services;
+using ReactiveUI;
+
 
 namespace CShroudApp.Presentation.Ui.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public NavigationService Navigation { get; }
+    private object _currentViewModel;
+
+    public object CurrentViewModel
+    {
+        get => _currentViewModel;
+        set => this.RaiseAndSetIfChanged(ref _currentViewModel, value);
+    }
 
     public MainWindowViewModel()
     {
-        Navigation = new NavigationService();
+        CurrentViewModel = new LoginViewModel();
     }
 }
