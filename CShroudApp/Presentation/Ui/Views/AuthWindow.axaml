@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
         x:Class="CShroudApp.Presentation.Ui.Views.AuthWindow"
         x:DataType="viewModels:AuthWindowViewModel"
         TransparencyLevelHint="AcrylicBlur"
@@ -15,13 +15,13 @@
         <!--<StyleInclude Source="/Presentation/Ui/Styles/Auth.axaml"/>-->
         
         <Style Selector="TextBox.inputField">
-            <Setter Property="Background" Value="Red"></Setter>
             <Setter Property="BorderThickness" Value="0"></Setter>
             <Setter Property="Foreground" Value="#989898"></Setter>
+            <Setter Property="Background" Value="#0D0D0D"></Setter>
             <Setter Property="Padding" Value="22 15 22 15"></Setter>
             
             <Style Selector="^:pointerover">
-                <Setter Property="Background" Value="#12F42C"/>
+                <Setter Property="Background" Value="#090909"/>
             </Style>
         </Style>
         
@@ -29,6 +29,10 @@
             <Setter Property="Background" Value="#222"></Setter>
             <Setter Property="BorderThickness" Value="0"></Setter>
             <Setter Property="CornerRadius" Value="0 5 5 0"></Setter>
+        </Style>
+        
+        <Style Selector="TextBlock.inputField_FieldText">
+            <Setter Property="Foreground" Value="#ACB5BC"></Setter>
         </Style>
         
         <Style Selector="Button.inputButton">
@@ -105,7 +109,7 @@
 
     </Window.Styles>
     
-    <Grid RowDefinitions="2*, * Auto, *, 2*">
+    <Grid RowDefinitions="2*, *, Auto, 2*, 2*">
         
         <Grid>
             
@@ -117,34 +121,44 @@
             
         </Grid>
         
-        <Grid Grid.Row="2" ColumnDefinitions="*, 2*, 80, 2*, *">
-            <TextBlock Grid.Column="2" TextAlignment="Center" VerticalAlignment="Center" Foreground="#6E6E6E" FontWeight="Bold">/</TextBlock>
-            
-            <Grid Grid.Column="1" RowDefinitions="Auto, 15, Auto, 15, Auto">
-                <TextBox Classes="inputField" Watermark="Username / Email">Zawh</TextBox>
+        <Grid Grid.Row="2" ColumnDefinitions="*, 4*, *">
+            <Grid Grid.Column="1" RowDefinitions="*, 80, *">
                 
-                <Grid Grid.Row="2" ColumnDefinitions="*, Auto">
-                    <MaskedTextBox Classes="inputField" Name="PasswordMaskedBox" PasswordChar="{Binding PasswordChar, UpdateSourceTrigger=PropertyChanged}" Watermark="Password" CornerRadius="5 0 0 5">dafwqeq</MaskedTextBox>
-                    <Button Grid.Column="1" Classes="inputField_FieldButton" Command="{Binding TogglePasswordVisibilityCommand}" VerticalAlignment="Stretch">
-                        <Svg Grid.Column="1" Path="{Binding EyeIcon, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Width="18" Height="18"></Svg>
+                <Grid Grid.Row="0" RowDefinitions="*, 10, *, 20, *">
+                    <Grid Grid.Row="0" RowDefinitions="Auto, 5, *">
+                        <TextBlock Classes="inputField_FieldText">Login</TextBlock>
+                        <TextBox Grid.Row="2" Classes="inputField" Name="LoginBox" Watermark="Login" CornerRadius="5 5 5 5"></TextBox>
+                    </Grid>
+                    
+                    <Grid Grid.Row="2" RowDefinitions="Auto, 5, *">
+                        <TextBlock Classes="inputField_FieldText">Password</TextBlock>
+                        <Grid Grid.Row="2" ColumnDefinitions="*, Auto">
+                            <MaskedTextBox Classes="inputField" Name="PasswordMaskedBox" PasswordChar="{Binding PasswordChar, UpdateSourceTrigger=PropertyChanged}" Watermark="Password" CornerRadius="5 0 0 5">dafwqeq</MaskedTextBox>
+                            <Button Grid.Column="1" Classes="inputField_FieldButton" Command="{Binding TogglePasswordVisibilityCommand}" VerticalAlignment="Stretch">
+                                <Svg Grid.Column="1" Path="{Binding EyeIcon, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Width="18" Height="18"></Svg>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                
+                    <Button Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Classes="inputButton">
+                        <Grid ColumnDefinitions="*, Auto" VerticalAlignment="Center">
+                            <TextBlock>Login to Your Account</TextBlock>
+                            <Svg Grid.Column="1" Path="/Assets/icons/svg/arrow-right--.svg" HorizontalAlignment="Right" Width="16" Height="16"></Svg>
+                        </Grid>
                     </Button>
                 </Grid>
                 
-                <Button Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Classes="inputButton">
-                    <Grid ColumnDefinitions="*, Auto" VerticalAlignment="Center">
-                        <TextBlock>Login to Your Account</TextBlock>
-                        <Svg Grid.Column="1" Path="/Assets/icons/svg/arrow-right--.svg" HorizontalAlignment="Right" Width="16" Height="16"></Svg>
-                    </Grid>
-                </Button>
-            </Grid>
-            
-            <Grid Grid.Column="3">
-                <Button Classes="externalLogin" HorizontalAlignment="Stretch">
-                    <Grid ColumnDefinitions="Auto, 20, *">
-                        <Svg Path="Assets/icons/svg/Artboard.svg" Width="16" Height="16"></Svg>
-                        <TextBlock Grid.Column="2">Login using Telegram</TextBlock>
-                    </Grid>
-                </Button>
+                <TextBlock Grid.Row="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#6E6E6E" FontWeight="Bold">/</TextBlock>
+
+                <Grid Grid.Row="2">
+                    <Button Classes="externalLogin" HorizontalAlignment="Stretch">
+                        <Grid ColumnDefinitions="Auto, 20, *">
+                            <Svg Path="Assets/icons/svg/Artboard.svg" Width="16" Height="16"></Svg>
+                            <TextBlock Grid.Column="2">Login using Telegram</TextBlock>
+                        </Grid>
+                    </Button>
+                </Grid>
+                
             </Grid>
             
         </Grid>

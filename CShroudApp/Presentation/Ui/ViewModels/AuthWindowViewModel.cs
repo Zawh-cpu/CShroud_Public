@@ -1,8 +1,12 @@
 ﻿using System.ComponentModel;
+using System.Reactive;
 using System.Windows.Input;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CShroudApp.Presentation.Services;
+using ExCSS;
+using ReactiveUI;
 
 namespace CShroudApp.Presentation.Ui.ViewModels;
 
@@ -10,6 +14,10 @@ public partial class AuthWindowViewModel : ViewModelBase
 {
     private bool _isPasswordVisible = false;
     public char? PasswordChar => _isPasswordVisible ? null : '\u25cf';
+    
+    private readonly NavigationService _navigation;
+    public ReactiveCommand<Unit, Unit> LoginCommand { get; }
+    
 
     // Иконка в зависимости от состояния
     public string EyeIcon => _isPasswordVisible
@@ -18,9 +26,11 @@ public partial class AuthWindowViewModel : ViewModelBase
     
     public ICommand TogglePasswordVisibilityCommand { get; }
 
-    public AuthWindowViewModel()
+    public AuthWindowViewModel(NavigationService navigation)
     {
         TogglePasswordVisibilityCommand = new RelayCommand(() => ToggleVisibility());
+        _navigation = navigation;
+        LoginCommand = ReactiveCommand.Create(GoToDashboard);
     }
 
     private void ToggleVisibility()
@@ -36,4 +46,9 @@ public partial class AuthWindowViewModel : ViewModelBase
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }*/
+    
+    private void GoToDashboard()
+    {
+        _navigation.Navigate(new DashboardViewModel(_navigation));
+    }
 }

@@ -23,6 +23,39 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.FastLogin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DeviceInfo")
+                        .HasMaxLength(225)
+                        .HasColumnType("character varying(225)");
+
+                    b.Property<string>("Ipv4Address")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("LoginTimeStamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.PrimitiveCollection<int[]>("Variants")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FastLogins");
+                });
+
             modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.Key", b =>
                 {
                     b.Property<Guid>("Id")
@@ -121,6 +154,8 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Mails");
                 });
@@ -361,7 +396,15 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("RecipientId");
 
+                    b.HasOne("CShroudGateway.Infrastructure.Data.Entities.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("CShroudGateway.Infrastructure.Data.Entities.ProtocolSettings", b =>

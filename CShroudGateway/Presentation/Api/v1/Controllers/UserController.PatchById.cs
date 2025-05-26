@@ -35,7 +35,7 @@ public partial class UserController
         if (request.RoleId is not null)
             lookedUser.RoleId = request.RoleId.Value;
 
-        if (request.RateId is not null && request.RatePayedUntil is not null)
+        if (request.RateId is not null && request.RatePayedUntil is not null && request.RatePayedUntil.Value.Kind == DateTimeKind.Utc)
         {
             lookedUser.RateId = request.RateId.Value;
             lookedUser.PayedUntil = request.RatePayedUntil.Value;

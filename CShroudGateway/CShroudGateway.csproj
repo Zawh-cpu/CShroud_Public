@@ -11,6 +11,7 @@
         <PackageReference Include="Ardalis.Result" Version="10.1.0" />
         <PackageReference Include="Google.Protobuf" Version="3.30.2" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+        <PackageReference Include="MaxMind.GeoIP2" Version="5.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
@@ -101,6 +102,9 @@
       </Compile>
       <Compile Update="Presentation\Api\v1\Controllers\UserController.PatchById.cs">
         <DependentUpon>UserController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.FastLogin.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 
