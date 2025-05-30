@@ -1,24 +1,27 @@
-﻿using CShroudApp.Presentation.Ui.ViewModels;
+﻿using CShroudApp.Presentation.Interfaces;
+using CShroudApp.Presentation.Ui.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CShroudApp.Presentation.Services;
 
-public class NavigationService : ReactiveObject
+public class NavigationService : INavigationService
 {
-    private ViewModelBase _currentPage;
-    public ViewModelBase CurrentPage
-    {
-        get => _currentPage;
-        set => this.RaiseAndSetIfChanged(ref _currentPage, value);
-    }
+    private IServiceProvider _serviceProvider;
 
-    public NavigationService()
+    public event EventHandler<ViewModelBase>? ViewModelChanged;
+    
+    public NavigationService(IServiceProvider serviceProvider)
     {
-        // стартовая страница
-        CurrentPage = new LoginViewModel(this);
+        _serviceProvider = serviceProvider;
     }
-
-    public void Navigate(ViewModelBase viewModel)
+    
+    public TViewModel GoTo<TViewModel>(params object[] args) where TViewModel : ViewModelBase
     {
-        CurrentPage = viewModel;
+        var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
+        viewModel.SwapData(args);
+        ViewModelChanged?.Invoke(this, viewModel);
+        
+        return viewModel;
+        
     }
 }

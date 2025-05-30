@@ -106,6 +106,18 @@
       <Compile Update="Presentation\Api\v1\Controllers\AuthController.FastLogin.cs">
         <DependentUpon>AuthController.cs</DependentUpon>
       </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.FastLoginCheck.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.FastLoginSetStatus.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.FastLoginCheckout.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Controllers\AuthController.FastLoginInfo.cs">
+        <DependentUpon>AuthController.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

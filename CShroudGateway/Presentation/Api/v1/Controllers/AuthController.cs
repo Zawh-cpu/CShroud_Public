@@ -11,12 +11,16 @@ public partial class AuthController : ControllerBase
     private readonly IBaseRepository _baseRepository;
     private readonly IAuthService _authService;
     private readonly ITokenService _tokenService;
+    private readonly IFastLoginService _fastLoginService;
+    private readonly IUserService _userService;
 
-    public AuthController(ILogger<PingController> logger, IBaseRepository baseRepository, IAuthService authService, ITokenService tokenService)
+    public AuthController(ILogger<PingController> logger, IBaseRepository baseRepository, IAuthService authService, ITokenService tokenService, IFastLoginService fastLoginService, IUserService userService)
     {
         _logger = logger;
         _baseRepository = baseRepository;
         _authService = authService;
         _tokenService = tokenService;
+        _fastLoginService = fastLoginService;
+        _userService = userService;
     }
 }

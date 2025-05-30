@@ -108,6 +108,7 @@ internal static class Program
         builder.Services.AddScoped<IRateManager, RateManager>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IFastLoginService, FastLoginService>();
         
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
@@ -118,6 +119,7 @@ internal static class Program
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });*/
+        
         
         var app = builder.Build();
 

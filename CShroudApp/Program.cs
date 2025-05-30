@@ -2,12 +2,17 @@
 using CShroudApp.Application.Factories;
 using CShroudApp.Core.Entities.Vpn;
 using CShroudApp.Core.Interfaces;
+using CShroudApp.Core.Shared;
 using CShroudApp.Infrastructure.Data.Config;
 using CShroudApp.Infrastructure.Platforms.Linux.Services;
 using CShroudApp.Infrastructure.Platforms.Windows.Services;
 using CShroudApp.Infrastructure.Services;
 using CShroudApp.Infrastructure.VpnLayers.SingBox;
+using CShroudApp.Presentation.Interfaces;
+using CShroudApp.Presentation.Services;
 using CShroudApp.Presentation.Ui;
+using CShroudApp.Presentation.Ui.ViewModels;
+using CShroudApp.Presentation.Ui.ViewModels.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VpnCore = CShroudApp.Infrastructure.Services.VpnCore;
@@ -34,7 +39,7 @@ internal static class Program
 
         switch (PlatformService.GetPlatform())
         {
-            case "Windows":
+            case "Windows": 
                 services.AddSingleton<IProxyManager, WindowsProxyManager>();
                 break;
     
@@ -51,12 +56,23 @@ internal static class Program
         services.AddSingleton<IVpnService, VpnService>();
 
 
-// Optional
+        // Optional
         services.AddSingleton<IVpnCoreLayer, SingBoxLayer>();
+        
+        services.AddHttpClient("CrimsonShroudApiHook",
+            client => client.BaseAddress = new Uri("http://localhost:5271"));
 
 
-
+        //
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<AuthViewModel>();
+        services.AddTransient<DashBoardViewModel>();
+        //
+            
         var service = services.BuildServiceProvider();
+        
+        SharedInAppMemory.ServiceProvider = service;
 
         var vpnService = service.GetRequiredService<IVpnService>();
         //vpnService.VpnEnabled += Aboba;

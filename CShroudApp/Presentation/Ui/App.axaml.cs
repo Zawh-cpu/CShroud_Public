@@ -1,15 +1,49 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
+using CShroudApp.Core.Shared;
 using CShroudApp.Presentation.Ui.ViewModels;
 using CShroudApp.Presentation.Ui.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CShroudApp.Presentation.Ui;
 
 public partial class App : Avalonia.Application
 {
-    public override void Initialize() => AvaloniaXamlLoader.Load(this);
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        Console.WriteLine("FFFFFFFFFFFFFFFFFFFFFFFFF234124124124141241241241");
+        var vm = SharedInAppMemory.ServiceProvider.GetService<MainWindowViewModel>();
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow = new MainWindow
+            {
+                DataContext = vm
+            };
+        }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        {
+            singleViewPlatform.MainView = new MainWindow()
+            {
+                DataContext = vm
+            };
+        }
+
+        base.OnFrameworkInitializationCompleted();
+        
+        /*if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow = new MainWindow
+            {
+                DataContext = new MainWindowViewModel(),
+            };
+        }
+
+        base.OnFrameworkInitializationCompleted();*/
+    }
 }

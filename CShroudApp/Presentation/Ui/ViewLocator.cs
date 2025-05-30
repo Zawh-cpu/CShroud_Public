@@ -1,32 +1,39 @@
-﻿using Avalonia.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using CShroudApp.Presentation.Ui.ViewModels;
 
 namespace CShroudApp.Presentation.Ui;
 
-public class ViewLocator
+public class ViewLocator : IDataTemplate
 {
-    private readonly Dictionary<Type, Func<Control>> _viewFactories = new();
-
-    public ViewLocator()
+    public Control Build(object? data)
     {
-        // Явно регистрируем
-        Register<AuthWindowViewModel>(() => new AuthWindowViewModel());
-        // Register<DashboardViewModel>(() => new DashboardView());
+        if (data is null)
+        {
+            return new TextBlock { Text = "data was null" };
+        }
+            
+        var name = data.GetType().FullName!.Replace("ViewModel", "View");
+        var type = Type.GetType(name);
+
+        if (type != null)
+        {
+            Console.WriteLine("FOUND IT!");
+            Console.WriteLine(data);
+            Console.WriteLine(name);
+            Console.WriteLine(type);
+            return (Control)Activator.CreateInstance(type)!;
+        }
+        else
+        {
+            return new TextBlock { Text = "Not Found ---: " + name };
+        }
     }
 
-    public void Register<TViewModel>(Func<Control> factory)
+    public bool Match(object? data)
     {
-        _viewFactories[typeof(TViewModel)] = factory;
-    }
-
-    public Control Resolve(object viewModel)
-    {
-        var type = viewModel.GetType();
-        if (_viewFactories.TryGetValue(type, out var factory))
-            return factory();
-
-        return new TextBlock { Text = "View not found for " + type.Name };
+        return data is ViewModelBase;
     }
 }

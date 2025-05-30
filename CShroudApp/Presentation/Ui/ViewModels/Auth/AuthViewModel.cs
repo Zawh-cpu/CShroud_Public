@@ -1,23 +1,16 @@
 ﻿using System.ComponentModel;
-using System.Reactive;
 using System.Windows.Input;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CShroudApp.Presentation.Services;
-using ExCSS;
-using ReactiveUI;
+using CShroudApp.Core.Interfaces;
 
-namespace CShroudApp.Presentation.Ui.ViewModels;
+namespace CShroudApp.Presentation.Ui.ViewModels.Auth;
 
-public partial class AuthWindowViewModel : ViewModelBase
+public partial class AuthViewModel : ViewModelBase
 {
     private bool _isPasswordVisible = false;
     public char? PasswordChar => _isPasswordVisible ? null : '\u25cf';
-    
-    private readonly NavigationService _navigation;
-    public ReactiveCommand<Unit, Unit> LoginCommand { get; }
-    
 
     // Иконка в зависимости от состояния
     public string EyeIcon => _isPasswordVisible
@@ -25,19 +18,23 @@ public partial class AuthWindowViewModel : ViewModelBase
         : "/Assets/icons/svg/eye-closed.svg";
     
     public ICommand TogglePasswordVisibilityCommand { get; }
+    public ICommand TryFastLogin { get; }
+    
+    private IApiRepository _apiRepository;
 
-    public AuthWindowViewModel(NavigationService navigation)
+    public AuthViewModel(IApiRepository apiRepository)
     {
+        _apiRepository = apiRepository;
+        
         TogglePasswordVisibilityCommand = new RelayCommand(() => ToggleVisibility());
-        _navigation = navigation;
-        LoginCommand = ReactiveCommand.Create(GoToDashboard);
+        TryFastLogin = new RelayCommand(() => FastLoginAttempt());
     }
 
     private void ToggleVisibility()
     {
         _isPasswordVisible = !_isPasswordVisible;
-        OnPropertyChanged(nameof(PasswordChar));
-        OnPropertyChanged(nameof(EyeIcon));
+        //OnPropertyChanged(nameof(PasswordChar));
+        //OnPropertyChanged(nameof(EyeIcon));
     }
 
     /*public event PropertyChangedEventHandler PropertyChanged;
@@ -46,9 +43,18 @@ public partial class AuthWindowViewModel : ViewModelBase
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }*/
-    
-    private void GoToDashboard()
+
+    private async Task FastLoginAttempt()
     {
-        _navigation.Navigate(new DashboardViewModel(_navigation));
+        Console.WriteLine("Fast login attempt");
+        var r = await _apiRepository.TryFastLoginAsync();
+        if (!r.IsSuccess)
+        {
+            // Create a fail notification manager
+            Console.WriteLine("Fast login failed");
+            return;
+        }
+        
+        Console.WriteLine("Fast login success");
     }
 }

@@ -2,5 +2,5 @@
 
 public class FastLoginRequest
 {
-    public string TelegramLogin { get; set; }
+    public string PublicKey { get; set; }
 }

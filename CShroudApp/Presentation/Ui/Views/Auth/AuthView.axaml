@@ -1,17 +1,13 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:CShroudApp.Presentation.Ui.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
-        x:Class="CShroudApp.Presentation.Ui.Views.AuthWindow"
-        x:DataType="viewModels:AuthWindowViewModel"
-        TransparencyLevelHint="AcrylicBlur"
-        Background="#161616"
-        Title="AvaloniaApplication1">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels.Auth"
+             mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
+             x:Class="CShroudApp.Presentation.Ui.Views.Auth.AuthView"
+             Background="#161616">
     
-    <Window.Styles>
+    <UserControl.Styles>
         <!--<StyleInclude Source="/Presentation/Ui/Styles/Auth.axaml"/>-->
         
         <Style Selector="TextBox.inputField">
@@ -107,7 +103,7 @@
             </Setter>
         </Style>
 
-    </Window.Styles>
+    </UserControl.Styles>
     
     <Grid RowDefinitions="2*, *, Auto, 2*, 2*">
         
@@ -151,7 +147,7 @@
                 <TextBlock Grid.Row="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#6E6E6E" FontWeight="Bold">/</TextBlock>
 
                 <Grid Grid.Row="2">
-                    <Button Classes="externalLogin" HorizontalAlignment="Stretch">
+                    <Button Classes="externalLogin" HorizontalAlignment="Stretch" Command="{ Binding TryFastLogin }">
                         <Grid ColumnDefinitions="Auto, 20, *">
                             <Svg Path="Assets/icons/svg/Artboard.svg" Width="16" Height="16"></Svg>
                             <TextBlock Grid.Column="2">Login using Telegram</TextBlock>
@@ -177,9 +173,7 @@
     </Grid>
     
     <Design.DataContext>
-        <viewModels:AuthWindowViewModel/>
+        <viewModels:AuthViewModel/>
     </Design.DataContext>
     
-    
-    
-</Window>
+</UserControl>

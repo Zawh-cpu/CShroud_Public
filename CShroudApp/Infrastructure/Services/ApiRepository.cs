@@ -1,4 +1,9 @@
-﻿using CShroudApp.Core.Entities.Vpn;
+﻿using System.Net.Http.Json;
+using System.Text.Json;
+using Ardalis.Result;
+using CShroudApp.Application.DTOs;
+using CShroudApp.Application.Serialization;
+using CShroudApp.Core.Entities.Vpn;
 using CShroudApp.Core.Interfaces;
 using Newtonsoft.Json.Linq;
 
@@ -6,7 +11,14 @@ namespace CShroudApp.Infrastructure.Services;
 
 public class ApiRepository : IApiRepository
 {
-    async public Task<VpnNetworkCredentials> ConnectToVpnNetworkAsync(List<VpnProtocol> supportedProtocols, string location)
+    private readonly HttpClient _httpClient;
+
+    public ApiRepository(IHttpClientFactory httpClientFactory)
+    {
+        _httpClient = httpClientFactory.CreateClient("CrimsonShroudApiHook");
+    }
+    
+    async public Task<VpnNetworkCredentials?> ConnectToVpnNetworkAsync(List<VpnProtocol> supportedProtocols, string location)
     {
         return new VpnNetworkCredentials()
         {
@@ -34,5 +46,19 @@ public class ApiRepository : IApiRepository
                 ["ShortId"] = "4ae60b64b5cd"
             }
         };
+    }
+
+    public async Task<Result<FastLoginDto>> TryFastLoginAsync()
+    {
+        var response = await _httpClient.GetAsync("/api/v1/auth/fast_login");
+        Console.WriteLine(response.StatusCode);
+        var stream = await response.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(
+            stream, 
+            AppJsonContext.Default.FastLoginDto);
+        
+        ArgumentNullException.ThrowIfNull(dto);
+
+        return dto;
     }
 }

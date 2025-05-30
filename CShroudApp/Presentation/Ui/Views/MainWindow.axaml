@@ -1,15 +1,23 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window x:Class="CShroudApp.Presentation.Ui.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:CShroudApp.Presentation.Ui.ViewModels"
-        xmlns:d="https://github.com/avaloniaui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CShroudApp"
-        xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
-        mc:Ignorable="d"
-        x:Class="CShroudApp.Presentation.Ui.Views.MainWindow"
-        Width="800" Height="600">
+        xmlns:vm="using:CShroudApp.Presentation.Ui.Views"
+        xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
+        Title="BasicViewLocatorSample"
+        d:DesignWidth="485"
+        d:DesignHeight="715"
+        x:CompileBindings="True"
+        Icon="/Assets/avalonia-logo.ico"
+        x:DataType="viewModels:MainWindowViewModel"
+        mc:Ignorable="d">
   
-    <controls:TransitioningContentControl Content="{Binding CurrentPage}"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"/>
+    <Design.DataContext>
+        <viewModels:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <TransitioningContentControl Content="{ Binding CurrentView }" />
+    </Grid> 
 </Window>

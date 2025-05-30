@@ -29,6 +29,9 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("DeviceInfo")
                         .HasMaxLength(225)
                         .HasColumnType("character varying(225)");
@@ -38,18 +41,22 @@ namespace CShroudGateway.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(15)");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("LoginTimeStamp")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.PrimitiveCollection<int[]>("Variants")
+                    b.Property<string>("Secret")
                         .IsRequired()
-                        .HasColumnType("integer[]");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.PrimitiveCollection<long[]>("Variants")
+                        .IsRequired()
+                        .HasColumnType("bigint[]");
+
+                    b.Property<Guid>("VerifiedUserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 

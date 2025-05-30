@@ -10,18 +10,16 @@ namespace CShroudGateway.Presentation.Api.v1.Controllers;
 
 public partial class AuthController
 {
-    [HttpGet("fast_login")]
-    public async Task<IActionResult> FastLoginAsync()
+    [HttpGet("fast_login/{flId:guid}/info")]
+    public async Task<IActionResult> FastLoginInfoAsync(Guid flId)
     {
-        var session = _fastLoginService.MakeSession(Request.Headers["User-Agent"].ToString(),
-            HttpContext.Connection.RemoteIpAddress?.ToString());
+        var session = await _baseRepository.GetFastLoginByExpressionAsync(fl => fl.Id == flId);
+        if (session is null || session.Status != FastLoginStatus.Pending || session.CreatedAt.AddMinutes(15) < DateTime.UtcNow) return NotFound();
         
-        await _baseRepository.AddEntityAsync(session);
-        return new OkObjectResult(new FastLoginStartResponse()
+        return new OkObjectResult(new FastLoginInfoResponse()
         {
             Id = session.Id,
-            ValidVariant = session.Variants[0],
-            Secret = session.Secret,
+            Variants = session.Variants
         });
     }
 }
