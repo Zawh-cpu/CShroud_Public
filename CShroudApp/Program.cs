@@ -23,54 +23,10 @@ internal static class Program
 {
     static int Main(string[] args)
     {
-        var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false)
-            .AddEnvironmentVariables()
-            .Build();
-
-        var services = new ServiceCollection();
-
-        services.Configure<SettingsConfig>(config.GetSection("Settings"));
-
-        services.AddSingleton<IProcessManager, ProcessManager>();
-        services.AddTransient<IProcessFactory, ProcessFactory>();
-        services.AddSingleton<IApiRepository, ApiRepository>();
-        services.AddSingleton<IVpnCore, VpnCore>();
-
-        switch (PlatformService.GetPlatform())
-        {
-            case "Windows": 
-                services.AddSingleton<IProxyManager, WindowsProxyManager>();
-                break;
-    
-            case "Linux":
-                services.AddSingleton<IProxyManager, LinuxProxyManager>();
-                break;
-    
-            default:
-                Console.WriteLine("This platform currently is not supported. Sorry :(");
-                Environment.Exit(1);
-                break;
-        }
-
-        services.AddSingleton<IVpnService, VpnService>();
-
-
-        // Optional
-        services.AddSingleton<IVpnCoreLayer, SingBoxLayer>();
         
-        services.AddHttpClient("CrimsonShroudApiHook",
-            client => client.BaseAddress = new Uri("http://localhost:5271"));
-
-
         //
-        services.AddSingleton<INavigationService, NavigationService>();
-        services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<AuthViewModel>();
-        services.AddTransient<DashBoardViewModel>();
-        //
-            
-        var service = services.BuildServiceProvider();
+
+        var service = DependencyInjectionConfiguration.GetProvider();
         
         SharedInAppMemory.ServiceProvider = service;
 

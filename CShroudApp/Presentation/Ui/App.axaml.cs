@@ -1,8 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CShroudApp.Core.Interfaces;
 using CShroudApp.Core.Shared;
+using CShroudApp.Infrastructure.Services;
+using CShroudApp.Presentation.Interfaces;
+using CShroudApp.Presentation.Services;
 using CShroudApp.Presentation.Ui.ViewModels;
+using CShroudApp.Presentation.Ui.ViewModels.Auth;
 using CShroudApp.Presentation.Ui.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,8 +22,13 @@ public partial class App : Avalonia.Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        Console.WriteLine("FFFFFFFFFFFFFFFFFFFFFFFFF234124124124141241241241");
-        var vm = SharedInAppMemory.ServiceProvider.GetService<MainWindowViewModel>();
+        IServiceProvider provider = SharedInAppMemory.ServiceProvider;
+        if (provider is null)
+        {
+            provider = DependencyInjectionConfiguration.GetProvider();
+        }
+        
+        var vm = provider.GetService<MainWindowViewModel>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow

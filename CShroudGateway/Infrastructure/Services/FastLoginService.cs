@@ -26,11 +26,22 @@ public class FastLoginService : IFastLoginService
     
     public FastLogin MakeSession(string? userAgent, string? ipAddress)
     {
+        uint[] variants = new uint[3];
+        uint a;
+        for (int i = 0; i < 3; i++)
+        {
+            do
+            {
+                a = (uint)RandomNumberGenerator.GetInt32(10, 999);
+                variants[i] = a;
+            } while (variants.Count(x => x == a) > 1);
+        }
+        
         return new FastLogin()
         {
             Ipv4Address = ipAddress,
             DeviceInfo = userAgent,
-            Variants = [1, 2, 3],
+            Variants = variants,
             Secret = GenerateAsciiToken(256)
         };
     }
