@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Core.Interfaces;
+using CShroudApp.Presentation.Interfaces;
 
 namespace CShroudApp.Presentation.Ui.ViewModels.Auth;
 
@@ -23,11 +24,13 @@ public partial class AuthViewModel : ViewModelBase
     public ICommand TogglePasswordVisibilityCommand { get; }
     public ICommand TryFastLogin { get; }
     
-    private IApiRepository _apiRepository;
+    private readonly IApiRepository _apiRepository;
+    private readonly INavigationService _navigationService;
 
-    public AuthViewModel(IApiRepository apiRepository)
+    public AuthViewModel(IApiRepository apiRepository, INavigationService navigationService)
     {
         _apiRepository = apiRepository;
+        _navigationService = navigationService;
         
         TogglePasswordVisibilityCommand = new RelayCommand(() => ToggleVisibility());
         TryFastLogin = new RelayCommand(() => FastLoginAttempt());
@@ -80,5 +83,8 @@ public partial class AuthViewModel : ViewModelBase
             // Тут можно вывести ошибку или залогировать
             Console.WriteLine($"Ошибка при открытии ссылки: {ex.Message}");
         }
+
+        var a = _navigationService.GoTo<FastLoginViewModel>();
+        a.SetValidCode(r.Value.ValidVariant.ToString());
     }
 }

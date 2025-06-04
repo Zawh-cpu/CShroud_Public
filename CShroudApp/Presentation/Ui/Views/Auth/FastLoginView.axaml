@@ -109,7 +109,7 @@
             
             <StackPanel Grid.Row="1" VerticalAlignment="Center">
                 
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
+                <!--<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
                     <Border Padding="7" Background="#202020" CornerRadius="5" BorderBrush="#242424" BorderThickness="1">
                         <TextBlock Foreground="White" FontSize="32">4</TextBlock>
                     </Border>
@@ -119,8 +119,22 @@
                     <Border Padding="7" Background="#202020" CornerRadius="5" BorderBrush="#242424" BorderThickness="1">
                         <TextBlock Foreground="White" FontSize="32">4</TextBlock>
                     </Border>
-                </StackPanel>
-                
+                </StackPanel>-->
+                <ItemsControl ItemsSource="{Binding ValidCode}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                        
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="7" Width="40" Background="#202020" CornerRadius="5" BorderBrush="#242424" BorderThickness="1">
+                                <TextBlock Foreground="White" FontSize="32" Text="{Binding}" HorizontalAlignment="Center"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
             
             <StackPanel Grid.Row="2" Spacing="20" Orientation="Horizontal" HorizontalAlignment="Center">
