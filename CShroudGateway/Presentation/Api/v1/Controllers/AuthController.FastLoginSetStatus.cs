@@ -20,8 +20,8 @@ public partial class AuthController
 
         var session = await _baseRepository.GetFastLoginByExpressionAsync(fl => fl.Id == flId);
         if (session is null || session.Status != FastLoginStatus.Pending || session.CreatedAt.AddMinutes(15) < DateTime.UtcNow) return NotFound();
-
-        if (session.Variants[0] != Convert.ToUInt32(variant))
+        
+        if (variant < 0 || session.Variants[0] != (uint)variant)
         {
             session.Status = FastLoginStatus.Declined;
             await _baseRepository.SaveContextAsync();

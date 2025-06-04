@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Text;
+using System.Text.Json;
 using System.Windows.Input;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -54,7 +57,28 @@ public partial class AuthViewModel : ViewModelBase
             Console.WriteLine("Fast login failed");
             return;
         }
-        
+            
         Console.WriteLine("Fast login success");
+        Console.WriteLine(r.Value.Id.ToString());
+        Console.WriteLine(r.Value.ValidVariant.ToString());
+
+        var data = $"verify_{r.Value.Id.ToString()}";
+        
+        var url = $"https://t.me/VeryRichBitchBot?start={Convert.ToBase64String(Encoding.UTF8.GetBytes(data))}";
+        try
+        {
+            using var process = new Process();
+            process.StartInfo = new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true // Это важно!
+            };
+            process.Start();
+        }
+        catch (Exception ex)
+        {
+            // Тут можно вывести ошибку или залогировать
+            Console.WriteLine($"Ошибка при открытии ссылки: {ex.Message}");
+        }
     }
 }

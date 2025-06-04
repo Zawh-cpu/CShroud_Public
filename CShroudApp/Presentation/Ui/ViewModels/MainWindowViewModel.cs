@@ -40,7 +40,7 @@ public class MainWindowViewModel : ViewModelBase
         // ToAuthCommand = new RelayCommand(() => ToAuth());
         //OnPropertyChanged(nameof(CurrentView));
 
-        navigationService.GoTo<AuthViewModel>();
+        navigationService.GoTo<FastLoginViewModel>();
     }
 
     public void ChangeWindow(object? sender, ViewModelBase view)

@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:CShroudApp.Presentation.Ui.Views"
         xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
-        Title="BasicViewLocatorSample"
+        Title="CrimsonShroud"
         d:DesignWidth="485"
         d:DesignHeight="715"
         x:CompileBindings="True"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/logo.ico"
         x:DataType="viewModels:MainWindowViewModel"
-        mc:Ignorable="d">
+        mc:Ignorable="d"
+        Width="485" Height="715">
   
     <Design.DataContext>
         <viewModels:MainWindowViewModel />

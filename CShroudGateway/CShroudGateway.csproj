@@ -120,4 +120,8 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Infrastructure\Data\Migrations\" />
+    </ItemGroup>
+
 </Project>
