@@ -1,0 +1,30 @@
+Copyright (c) 2025 DANIIL GAYKALOV / ZAWH. All rights reserved.
+
+This software, including but not limited to its source code, compiled binaries, algorithms, assets, documentation, concepts, project structure, architecture, implementation methods, and any related materials (collectively referred to as the "Software"), is proprietary, confidential, and protected by applicable copyright and intellectual property laws.
+
+**Absolute Use Restriction**
+
+Any form of use of this Software or any part thereof is strictly prohibited without the prior explicit written consent of the author. This prohibition applies to, but is not limited to:
+
+- Copying, downloading, or distributing the Software or any of its parts.
+- Modifying, adapting, decompiling, reverse engineering, or creating derivative works based on the Software or its elements.
+- Using the Software, its ideas, structures, algorithms, concepts, or assets (such as images, icons, sounds, media files) in any other project, product, or service.
+- Publicly or privately publishing, uploading, or sharing the Software or any part of it, including its technologies, concepts, or implementation methods.
+- Using the Software or its parts for educational, demonstration, research, commercial, non-commercial, or personal purposes.
+- Any other action involving the Software or its components in any form, medium, or context.
+
+**Legal Notice**
+
+Unauthorized use, copying, modification, distribution, publication, or any other form of exploitation of this Software or any part of it constitutes a direct violation of intellectual property rights and may result in legal action, including but not limited to claims for damages, court injunctions, and criminal prosecution under applicable local and international laws.
+
+**Permission Requests**
+
+Any permission for the use of this Software or any part thereof must be obtained through an explicit, prior, and written agreement signed by the author. Absence of such agreement constitutes a complete prohibition on any form of use.
+
+**Purpose of Disclosure**
+
+This Software is disclosed solely for review purposes within the context of an internship, employment application, or academic evaluation process and must not be used for any other purpose.
+
+For permission requests or inquiries, please contact:
+danygaikalov@yandex.ru
+zawh.abc@gmail.com
