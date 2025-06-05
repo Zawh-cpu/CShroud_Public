@@ -43,7 +43,5 @@ public interface IBaseRepository
     Task<User[]> GetUsersByExpressionAsync(Expression<Func<User, bool>> predicate,
         params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers);
     
-    Task<FastLogin?> GetFastLoginByExpressionAsync(Expression<Func<FastLogin, bool>> predicate);
-    
     Task SaveContextAsync();
 }

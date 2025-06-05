@@ -1,7 +1,5 @@
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
-using CShroudApp.Presentation.Ui.ViewModels;
 
 namespace CShroudApp.Presentation.Ui.Views;
 

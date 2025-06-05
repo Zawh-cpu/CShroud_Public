@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CShroudDAW", "CShroudDAW\CS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certs", "Certs", "{97EF563C-6932-45E8-8064-1A3FC57720C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{233D7402-8745-4E4D-B3A0-1E1729124FE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{03FC4839-9945-4F93-A724-BF9DE7D47E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03FC4839-9945-4F93-A724-BF9DE7D47E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03FC4839-9945-4F93-A724-BF9DE7D47E1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{97EF563C-6932-45E8-8064-1A3FC57720C3} = {31C65111-9A67-4A55-9737-C6D9A16809B3}

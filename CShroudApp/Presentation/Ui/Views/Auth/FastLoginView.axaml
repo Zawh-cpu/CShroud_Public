@@ -138,13 +138,13 @@
             </StackPanel>
             
             <StackPanel Grid.Row="2" Spacing="20" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Classes="beautifulButton-1" HorizontalAlignment="Stretch">
+                <Button Classes="beautifulButton-1" HorizontalAlignment="Stretch" Command="{ Binding GoBackCommand }">
                     <Grid ColumnDefinitions="Auto, 20, *">
                         <Svg Path="Assets/icons/svg/arrow-left.svg" Width="16" Height="16"></Svg>
                         <TextBlock Grid.Column="2">Cancel</TextBlock>
                     </Grid>
                 </Button>
-                <Button Classes="beautifulButton-2" HorizontalAlignment="Stretch">
+                <Button Classes="beautifulButton-2" HorizontalAlignment="Stretch" Command="{ Binding OpenTelegramCommand }">
                     <Grid ColumnDefinitions="Auto, 20, *">
                         <Svg Path="Assets/icons/svg/Artboard.svg" Width="16" Height="16"></Svg>
                         <TextBlock Grid.Column="2">To Telegram</TextBlock>

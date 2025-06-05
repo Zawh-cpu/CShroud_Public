@@ -23,7 +23,6 @@ public class ApplicationDbContext : DbContext
     
     public DbSet<Token> Tokens { get; set; }
     public DbSet<LoginHistory> LoginHistories { get; set; }
-    public DbSet<FastLogin> FastLogins { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

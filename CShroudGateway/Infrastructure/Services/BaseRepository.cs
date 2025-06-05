@@ -182,11 +182,6 @@ public class BaseRepository : IBaseRepository
         
         return await query.OrderByDescending(s => s.Id).Take(limit).ToListAsync();
     }
-
-    public async Task<FastLogin?> GetFastLoginByExpressionAsync(Expression<Func<FastLogin, bool>> predicate)
-    {
-        return await _context.FastLogins.Where(predicate).FirstOrDefaultAsync();
-    }
     
     public async Task SaveContextAsync() => await _context.SaveChangesAsync();
 }

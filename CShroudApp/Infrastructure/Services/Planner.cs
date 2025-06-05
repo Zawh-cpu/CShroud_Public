@@ -1,4 +1,4 @@
-﻿using CShroudApp.Core.Interfaces;
+using CShroudApp.Core.Interfaces;
 
 namespace CShroudApp.Infrastructure.Services;
 
@@ -6,10 +6,13 @@ public class Planner : IPlanner
 {
     private List<IPlannedTask> _plannedTasks = new();
     private readonly CancellationTokenSource _cts = new();
+    private readonly IServiceProvider _serviceProvider;
+    
     public Task RuntimeTask;
 
-    public Planner()
+    public Planner(IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         RuntimeTask = Task.CompletedTask;
     }
 
@@ -65,7 +68,7 @@ public class Planner : IPlanner
                     _plannedTasks.Remove(task);
                     try
                     {
-                        await task.Action(this, currentTime);
+                        await task.ActionAsync(this, currentTime, _serviceProvider, default);
                     }
                     catch (Exception ex)
                     {

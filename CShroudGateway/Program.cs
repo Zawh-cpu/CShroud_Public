@@ -6,6 +6,7 @@ using CShroudGateway.Infrastructure.Data.Config;
 using CShroudGateway.Infrastructure.Data.Entities;
 using CShroudGateway.Infrastructure.Services;
 using CShroudGateway.Infrastructure.Tasks;
+using CShroudGateway.Presentation.Api.v1.Hubs;
 using CShroudGateway.Presentation.DeprecatedApi.gRPC.v1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -108,13 +109,14 @@ internal static class Program
         builder.Services.AddScoped<IRateManager, RateManager>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IFastLoginService, FastLoginService>();
+        builder.Services.AddSingleton<IQuickAuthService, QuickAuthServices>();
         
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
         
         builder.Services.AddGrpc();
         builder.Services.AddControllers();
+        builder.Services.AddSignalR();
         /*.AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -137,6 +139,7 @@ internal static class Program
         app.MapGrpcService<MachineService>();
         
         app.MapControllers();
+        app.MapHub<QuickAuthHub>("/api/v1/quick-auth-hub");
 
         Task.WhenEach(CheckForReservedConstants(app.Services));
         RunTasks(app.Services);

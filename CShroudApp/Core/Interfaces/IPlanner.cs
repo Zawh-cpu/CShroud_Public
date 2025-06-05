@@ -1,4 +1,4 @@
-﻿namespace CShroudApp.Core.Interfaces;
+namespace CShroudApp.Core.Interfaces;
 
 public interface IPlanner
 {
