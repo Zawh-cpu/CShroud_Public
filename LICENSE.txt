@@ -23,7 +23,7 @@ Any permission for the use of this Software or any part thereof must be obtained
 
 **Purpose of Disclosure**
 
-This Software is disclosed solely for review purposes within the context of an internship, employment application, or academic evaluation process and must not be used for any other purpose.
+This Software is disclosed solely for review purposes within the context of an internship, employment application, project presentation, or academic evaluation process and must not be used for any other purpose.
 
 For permission requests or inquiries, please contact:
 danygaikalov@yandex.ru
