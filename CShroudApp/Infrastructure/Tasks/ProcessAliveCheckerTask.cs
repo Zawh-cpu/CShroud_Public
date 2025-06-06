@@ -13,7 +13,8 @@ public class TestTask : IPlannedTask
         _vpnCore = vpnCore;
     }
 
-    public async Task Action(IPlanner planner, DateTime currentTime)
+    public async Task ActionAsync(IPlanner planner, DateTime currentTime, IServiceProvider serviceProvider,
+        CancellationToken cancellationToken = default)
     {
         if (_vpnCore.IsRunning == false)
         {

@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using Ardalis.Result;
 using CShroudApp.Application.DTOs;
@@ -48,17 +50,37 @@ public class ApiRepository : IApiRepository
         };
     }
 
-    public async Task<Result<FastLoginDto>> TryFastLoginAsync()
+    public async Task<Result<SignInDto>> FinalizeQuickAuthAttemptAsync(QuickAuthDto data)
     {
-        var response = await _httpClient.GetAsync("/api/v1/auth/fast_login");
-        Console.WriteLine(response.StatusCode);
+        var response = await _httpClient.PostAsync($"/api/v1/auth/fast_login/{data.SessionId}/finalize", new StringContent(data.SecretLoginCode, Encoding.UTF8, "application/json"));
+        if (!response.IsSuccessStatusCode) return Result.Forbidden();
+        
+        if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
+        
         var stream = await response.Content.ReadAsStreamAsync();
         var dto = await JsonSerializer.DeserializeAsync(
             stream, 
-            AppJsonContext.Default.FastLoginDto);
-        
-        ArgumentNullException.ThrowIfNull(dto);
+            AppJsonContext.Default.SignInDto);
 
+        if (dto is null) return Result.CriticalError();
+        
+        return dto;
+    }
+
+    public async Task<Result<QuickAuthSessionDto>> CreateQuickAuthSessionAsync()
+    {
+        var response = await _httpClient.PostAsync($"/api/v1/auth/quick-auth", null);
+        if (!response.IsSuccessStatusCode) return Result.Forbidden();
+        
+        if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
+        
+        var stream = await response.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(
+            stream, 
+            AppJsonContext.Default.QuickAuthSessionDto);
+
+        if (dto is null) return Result.CriticalError();
+        
         return dto;
     }
 }

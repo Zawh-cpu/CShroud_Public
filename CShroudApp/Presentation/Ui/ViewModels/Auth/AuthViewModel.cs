@@ -50,41 +50,8 @@ public partial class AuthViewModel : ViewModelBase
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }*/
 
-    private async Task FastLoginAttempt()
+    private void FastLoginAttempt()
     {
-        Console.WriteLine("Fast login attempt");
-        var r = await _apiRepository.TryFastLoginAsync();
-        if (!r.IsSuccess)
-        {
-            // Create a fail notification manager
-            Console.WriteLine("Fast login failed");
-            return;
-        }
-            
-        Console.WriteLine("Fast login success");
-        Console.WriteLine(r.Value.Id.ToString());
-        Console.WriteLine(r.Value.ValidVariant.ToString());
-
-        var data = $"verify_{r.Value.Id.ToString()}";
-        
-        var url = $"https://t.me/VeryRichBitchBot?start={Convert.ToBase64String(Encoding.UTF8.GetBytes(data))}";
-        try
-        {
-            using var process = new Process();
-            process.StartInfo = new ProcessStartInfo
-            {
-                FileName = url,
-                UseShellExecute = true // Это важно!
-            };
-            process.Start();
-        }
-        catch (Exception ex)
-        {
-            // Тут можно вывести ошибку или залогировать
-            Console.WriteLine($"Ошибка при открытии ссылки: {ex.Message}");
-        }
-
-        var a = _navigationService.GoTo<FastLoginViewModel>();
-        a.SetValidCode(r.Value.ValidVariant.ToString());
+        _navigationService.GoTo<FastLoginViewModel>();
     }
 }

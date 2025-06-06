@@ -4,6 +4,7 @@ using System.Windows.Input;
 
 
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Presentation.Interfaces;
 using CShroudApp.Presentation.Services;
@@ -11,7 +12,7 @@ using CShroudApp.Presentation.Ui.ViewModels.Auth;
 
 namespace CShroudApp.Presentation.Ui.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase
 {
     public ICommand ToAuthCommand { get; }
     
@@ -21,31 +22,25 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _currentView, value);
     }*/
 
-    private ViewModelBase _currentView;
-    
-    public ViewModelBase CurrentView
-    {
-        get { return _currentView; }
-        private set { this.RaiseAndSetIfChanged(ref _currentView, value); }
-        //set { SetProperty(ref _currentView, value); }
-    }
+    [ObservableProperty]
+    private ViewModelBase _currentView = null!;
 
     public MainWindowViewModel(INavigationService navigationService)
     {
-        // CurrentView = new AuthWindowViewModel();
-        //CurrentView = new AuthWindowViewModel();
-
         navigationService.ViewModelChanged += ChangeWindow;
-        
-        // ToAuthCommand = new RelayCommand(() => ToAuth());
-        //OnPropertyChanged(nameof(CurrentView));
 
-        // navigationService.GoTo<FastLoginViewModel>();
+        ToAuthCommand = new RelayCommand(() =>
+        {
+            navigationService.GoTo<AuthViewModel>();
+        });
+        
         navigationService.GoTo<AuthViewModel>();
     }
 
     public void ChangeWindow(object? sender, ViewModelBase view)
     {
+        CurrentView?.OnUnloaded();
         CurrentView = view;
+        CurrentView?.OnLoaded();
     }
 }

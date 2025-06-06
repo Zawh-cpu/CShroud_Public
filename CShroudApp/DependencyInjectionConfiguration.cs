@@ -36,6 +36,7 @@ public static class DependencyInjectionConfiguration
         services.AddSingleton<IProcessManager, ProcessManager>();
         services.AddTransient<IProcessFactory, ProcessFactory>();
         services.AddSingleton<IApiRepository, ApiRepository>();
+        services.AddSingleton<IQuickAuthService, QuickAuthService>();
         services.AddSingleton<IVpnCore, VpnCore>();
 
         switch (PlatformService.GetPlatform())

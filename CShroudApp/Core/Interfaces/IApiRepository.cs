@@ -7,5 +7,6 @@ namespace CShroudApp.Core.Interfaces;
 public interface IApiRepository
 {
     Task<VpnNetworkCredentials?> ConnectToVpnNetworkAsync(List<VpnProtocol> supportedProtocols, string location);
-    Task<Result<FastLoginDto>> TryFastLoginAsync();
+    Task<Result<SignInDto>> FinalizeQuickAuthAttemptAsync(QuickAuthDto data);
+    Task<Result<QuickAuthSessionDto>> CreateQuickAuthSessionAsync();
 }
