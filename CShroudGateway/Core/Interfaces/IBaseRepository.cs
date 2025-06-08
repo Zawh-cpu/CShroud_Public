@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using CShroudGateway.Application.DTOs.Keys;
 using CShroudGateway.Core.Entities;
 using CShroudGateway.Infrastructure.Data.Entities;
 
@@ -13,6 +14,7 @@ public interface IBaseRepository
     Task<int> CountKeysAsync(Guid userId, Expression<Func<Key, bool>>? predicate = null);
     Task<User?> GetUserByIdAsync(Guid userId, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers);
     Task<User?> GetUserByExpressionAsync(Expression<Func<User, bool>> predicate, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers);
+    Task<Server?> GetServerByExpressionAsync(Expression<Func<Server, bool>> predicate, params Func<IQueryable<Server>, IQueryable<Server>>[] queryModifiers);
     Task<Token?> GetTokenByIdAsync(Guid tokenId);
     Task AddWithSaveAsync<TEntity>(TEntity entity) where TEntity : class;
     Task AddEntityAsync<TEntity>(TEntity entity, bool saveChanges = true) where TEntity : class;
@@ -36,6 +38,7 @@ public interface IBaseRepository
     Task<Role[]> GetRolesByExpressionAsync(Expression<Func<Role, bool>> predicate);
     
     Task<Key[]> GetKeysByExpressionAsync(Expression<Func<Key, bool>> predicate, params Func<IQueryable<Key>, IQueryable<Key>>[] queryModifiers);
+    Task<KeyWithVpnLevel[]> GetKeysWithVpnLevelByExpressionAsync(Expression<Func<Key, bool>> predicate);
 
     Task<ProtocolSettings?> GetProtocolSettingsAsync(Expression<Func<ProtocolSettings, bool>> predicate,
         params Func<IQueryable<ProtocolSettings>, IQueryable<ProtocolSettings>>[] queryModifiers);

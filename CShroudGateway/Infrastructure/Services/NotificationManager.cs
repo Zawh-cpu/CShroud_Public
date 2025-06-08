@@ -24,13 +24,13 @@ public class NotificationManager : INotificationManager
             Id = x.Id,
             Recipient = new UserDto()
             {
-                Id = x.Recipient.Id,
+                Id = x.Recipient!.Id,
                 Nickname = x.Recipient.Nickname,
                 TelegramId = x.Recipient.TelegramId,
                 IsVerified = x.Recipient.IsVerified
             },
             Sender = new UserDto() {
-                Id = x.Sender.Id,
+                Id = x.Sender!.Id,
                 Nickname = x.Sender.Nickname,
                 TelegramId = x.Sender.TelegramId,
                 IsVerified = x.Sender.IsVerified

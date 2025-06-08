@@ -7,7 +7,7 @@ using CShroudGateway.Infrastructure.Data.Entities;
 using CShroudGateway.Infrastructure.Services;
 using CShroudGateway.Infrastructure.Tasks;
 using CShroudGateway.Presentation.Api.v1.Hubs;
-using CShroudGateway.Presentation.DeprecatedApi.gRPC.v1.Services;
+using Services = CShroudGateway.Presentation.Api.v1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -96,7 +96,6 @@ internal static class Program
         builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 
         builder.Services.AddSingleton<IGrpcPool, GrpcPool>();
-        builder.Services.AddSingleton<IUpdatePrimitive, UpdatePrimitive>();
         builder.Services.AddSingleton<INotificationManager, NotificationManager>();
         builder.Services.AddSingleton<IPlanner, Planner>();
         builder.Services.AddSingleton<IJwtService, JwtService>();
@@ -134,9 +133,10 @@ internal static class Program
         }
 
         // app.UseHttpsRedirection();
-        app.MapGrpcService<ControlService>();
-        app.MapGrpcService<UpdateService>();
-        app.MapGrpcService<MachineService>();
+        //app.MapGrpcService<ControlService>();
+        //app.MapGrpcService<UpdateService>();
+        //app.MapGrpcService<MachineService>();
+        app.MapGrpcService<Services.SyncService>();
         
         app.MapControllers();
         app.MapHub<QuickAuthHub>("/api/v1/quick-auth-hub");

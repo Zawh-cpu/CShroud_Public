@@ -37,7 +37,10 @@ public static class DependencyInjectionConfiguration
         services.AddTransient<IProcessFactory, ProcessFactory>();
         services.AddSingleton<IApiRepository, ApiRepository>();
         services.AddSingleton<IQuickAuthService, QuickAuthService>();
+        services.AddSingleton<ISessionManager, SessionManager>();
         services.AddSingleton<IVpnCore, VpnCore>();
+        services.AddSingleton<IStorageManager, StorageManager>();
+        services.AddSingleton<IEventManager, EventManager>();
 
         switch (PlatformService.GetPlatform())
         {

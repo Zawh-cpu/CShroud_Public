@@ -35,14 +35,14 @@
                 </Grid>
                 
                 <Grid Grid.Row="1">
-                        <Grid RowDefinitions="Auto, 5, Auto" HorizontalAlignment="Center">
+                        <Grid RowDefinitions="Auto, 5, Auto">
                                 <TextBlock HorizontalAlignment="Center" Foreground="#565658" FontSize="14">IP: 179.61.132.185</TextBlock>
-                                <TextBlock Grid.Row="2" HorizontalAlignment="Center" Foreground="#FFF" FontSize="40" LetterSpacing="4">00:00:00</TextBlock>
+                                <TextBlock Grid.Row="2" HorizontalAlignment="Center" Foreground="#FFF" FontSize="40" LetterSpacing="4" Text="{ Binding TimerText }"/>
                         </Grid>
                 </Grid>
                 
                 <Grid Grid.Row="2" RowDefinitions="*">
-                        <Button Classes="square-circle" Width="{Binding Bounds.Height, RelativeSource={RelativeSource Self}}" MinHeight="70" MaxHeight="260" VerticalAlignment="Stretch" HorizontalAlignment="Center" Margin="50">
+                        <Button Command="{Binding ToggleVpnCommand}" Classes="square-circle" Width="{Binding Bounds.Height, RelativeSource={RelativeSource Self}}" MinHeight="70" MaxHeight="260" VerticalAlignment="Stretch" HorizontalAlignment="Center" Margin="50">
                                 <Button.Background>
                                         <LinearGradientBrush StartPoint="0,0" EndPoint="100%,100%">
                                                 <GradientStop Color="#A53889" Offset="0.2"/>  
@@ -69,7 +69,7 @@
                                                                         </Viewbox>
                                                                 </Border>
                                                                 <Grid Grid.Column="2" RowDefinitions="Auto, 2, Auto">
-                                                                        <TextBlock FontWeight="Medium" FontSize="16" Foreground="#FFF">570 KB/s</TextBlock>
+                                                                        <TextBlock FontWeight="Medium" FontSize="16" Foreground="#FFF">0 KB/s</TextBlock>
                                                                         <TextBlock Grid.Row="2" FontWeight="Medium" FontSize="14" Foreground="#545454">Upload</TextBlock>
                                                                 </Grid>
                                                         </Grid>
@@ -85,7 +85,7 @@
                                                                         </Viewbox>
                                                                 </Border>
                                                                 <Grid Grid.Column="0" RowDefinitions="Auto, 2, Auto">
-                                                                        <TextBlock FontWeight="Medium" FontSize="16" Foreground="#FFF">570 KB/s</TextBlock>
+                                                                        <TextBlock FontWeight="Medium" FontSize="16" Foreground="#FFF">0 KB/s</TextBlock>
                                                                         <TextBlock Grid.Row="2" FontWeight="Medium" FontSize="14" Foreground="#545454">Download</TextBlock>
                                                                 </Grid>
                                                         </Grid>

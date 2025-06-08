@@ -7,8 +7,12 @@ namespace CShroudGateway.Presentation.Api.v1.Controllers;
 public partial class AuthController
 {
     [HttpPost("quick-auth/{qaId:guid}/finalize")]
-    public async Task<IActionResult> QuickAuthFinalize(Guid qaId, [FromBody] string secretLoginCode)
+    public async Task<IActionResult> QuickAuthFinalize(Guid qaId)
     {
+        using var reader = new StreamReader(Request.Body);
+        var secretLoginCode = await reader.ReadToEndAsync();
+        if (secretLoginCode == string.Empty) return new BadRequestResult();
+        
         var session = _quickAuth.FinalizeSession(qaId.ToString());
         if (session is null || session?.SecretLoginCode != secretLoginCode) return NotFound();
         
@@ -19,6 +23,7 @@ public partial class AuthController
             HttpContext.Connection.RemoteIpAddress?.ToString());
         if (!authDto.IsSuccess) return new UnauthorizedResult();
         
+        Console.WriteLine("OnQuickAuthFinalizedddddd");
         return new OkObjectResult(new SignInResponse
         {
             UserId = authDto.Value.UserId,

@@ -1,0 +1,26 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "CShroudGateway";
+
+package syncservice;
+
+import "google/protobuf/empty.proto";
+
+service SyncService {
+  rpc SyncKeys (SyncKeyRequest) returns (SyncKeyResponse);
+}
+
+message SyncKeyRequest {
+  string secretKey = 1;
+}
+
+message SyncKeyResponse {
+  repeated StructKey keys = 1;
+}
+
+message StructKey {
+  string id = 1;
+  string protocol = 2;
+  uint32 vpnLevel = 3;
+  string options = 4;
+}

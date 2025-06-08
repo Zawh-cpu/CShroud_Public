@@ -1,5 +1,8 @@
-﻿namespace CShroudApp.Application.DTOs;
+﻿using System.Text.Json.Serialization;
 
+namespace CShroudApp.Application.DTOs;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum QuickAuthStatus
 {
     Pending,

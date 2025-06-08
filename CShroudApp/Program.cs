@@ -34,6 +34,7 @@ internal static class Program
         //vpnService.VpnEnabled += Aboba;
         //vpnService.VpnDisabled += AbobaOff;
         //vpnService.EnableAsync(VpnMode.Disabled).GetAwaiter().GetResult();
+        
         UiLoader.Run([]);
 
         return 0;

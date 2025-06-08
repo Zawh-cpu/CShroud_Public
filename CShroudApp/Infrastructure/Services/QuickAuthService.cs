@@ -51,14 +51,14 @@ public class QuickAuthService : IQuickAuthService
             OnAttemptDeclined?.Invoke();
             return;
         }
-
+        
         var response = await _apiRepository.FinalizeQuickAuthAttemptAsync(data);
         if (!response.IsSuccess)
         {
             OnAttemptDeclined?.Invoke();
             return;
         }
-
+        
         OnAttemptSuccess?.Invoke(this, response);
     }
 }

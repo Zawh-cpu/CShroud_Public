@@ -1,12 +1,16 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Ardalis.Result;
 using CShroudApp.Application.DTOs;
 using CShroudApp.Application.Serialization;
+using CShroudApp.Core.Entities;
+using CShroudApp.Core.Entities.User;
 using CShroudApp.Core.Entities.Vpn;
 using CShroudApp.Core.Interfaces;
+using CShroudApp.Core.Shared;
 using Newtonsoft.Json.Linq;
 
 namespace CShroudApp.Infrastructure.Services;
@@ -14,10 +18,67 @@ namespace CShroudApp.Infrastructure.Services;
 public class ApiRepository : IApiRepository
 {
     private readonly HttpClient _httpClient;
+    private readonly IEventManager _eventManager;
 
-    public ApiRepository(IHttpClientFactory httpClientFactory)
+    private Token? _refreshToken;
+    private Token? _accessToken;
+
+    public string? ActionToken
+    {
+        get
+        {
+            if (_accessToken is null || _accessToken?.Expiration <= DateTime.Now)
+            {
+                var token = Task.Run(RefreshActionTokenAsync).Result;
+                if (!token.IsSuccess)
+                    return null;
+                _accessToken = Token.Parse(token.Value.ActionToken);
+            }
+            
+            return _accessToken?.Data;
+        }
+    }
+
+    public string? RefreshToken
+    {
+        get => _refreshToken?.Data;
+        set => _refreshToken = Token.Parse(value!);
+    }
+
+    public ApiRepository(IHttpClientFactory httpClientFactory, IEventManager eventManager)
     {
         _httpClient = httpClientFactory.CreateClient("CrimsonShroudApiHook");
+        _eventManager = eventManager;
+    }
+    
+    private bool RequireToken()
+    {
+        var token = ActionToken;
+        if (token is null)
+        {
+            _eventManager.CallAuthSessionExpired();
+            return false;
+        }
+        
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return true;
+    }
+
+    public async Task<Result<ActionRefreshDto>> RefreshActionTokenAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/auth/refresh");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", RefreshToken);
+        var response = await _httpClient.SendAsync(request);
+        if (!response.IsSuccessStatusCode) return Result.Unauthorized();
+        
+        var stream = await response.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(
+            stream, 
+            AppJsonContext.Default.ActionRefreshDto);
+        
+        if (dto is null) return Result.CriticalError();
+        
+        return dto;
     }
     
     async public Task<VpnNetworkCredentials?> ConnectToVpnNetworkAsync(List<VpnProtocol> supportedProtocols, string location)
@@ -52,7 +113,10 @@ public class ApiRepository : IApiRepository
 
     public async Task<Result<SignInDto>> FinalizeQuickAuthAttemptAsync(QuickAuthDto data)
     {
-        var response = await _httpClient.PostAsync($"/api/v1/auth/fast_login/{data.SessionId}/finalize", new StringContent(data.SecretLoginCode, Encoding.UTF8, "application/json"));
+        Console.WriteLine(data.SessionId);
+        Console.WriteLine(data.SecretLoginCode);
+        var response = await _httpClient.PostAsync($"/api/v1/auth/quick-auth/{data.SessionId}/finalize", new StringContent(data.SecretLoginCode, Encoding.UTF8));
+        Console.WriteLine(response.StatusCode);
         if (!response.IsSuccessStatusCode) return Result.Forbidden();
         
         if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
@@ -82,5 +146,32 @@ public class ApiRepository : IApiRepository
         if (dto is null) return Result.CriticalError();
         
         return dto;
+    }
+
+    public async Task<Result<User>> GetUserInformationAsync()
+    {
+        Console.WriteLine("GetUserInformationAsync");
+        if (!RequireToken()) return Result.Unauthorized();
+        Console.WriteLine("GETUSERINFORMATION");
+        
+        var response = await _httpClient.GetAsync($"/api/v1/user/me");
+        
+        if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
+        
+        var stream = await response.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(
+            stream, 
+            AppJsonContext.Default.GetUserDto);
+
+        if (dto is null) return Result.CriticalError();
+        
+        return new User()
+        {
+            Id = dto.Id,
+            IsVerified = dto.IsVerified,
+            Nickname = dto.Nickname,
+            Rate = dto.Rate,
+            Role = dto.Role
+        };
     }
 }

@@ -9,25 +9,26 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result" Version="10.1.0" />
-        <PackageReference Include="Google.Protobuf" Version="3.30.2" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server" Version="2.71.0" />
         <PackageReference Include="MaxMind.GeoIP2" Version="5.3.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="9.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="9.0.5" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.OpenApi" Version="1.6.24" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.1.17" />
-        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="8.1.1" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.4.11" />
+        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="8.1.4" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,7 +39,7 @@
 
     <ItemGroup>
         <Protobuf Include="Infrastructure\Protos\**\*.proto" GrpcServices="Client" ProtoRoot="Infrastructure/Protos/" />
-        <Protobuf Include="Presentation\DeprecatedApi\gRPC\v1\Protos\**\*.proto" GrpcServices="Server" ProtoRoot="Presentation/DeprecatedApi/gRPC/v1/Protos/" />
+        <Protobuf Include="Presentation\Api\v1\Protos\**\*.proto" GrpcServices="Server" ProtoRoot="Presentation\Api\v1\Protos\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -116,6 +117,9 @@
       </Compile>
       <Compile Update="Presentation\Api\v1\Controllers\RoleController.GetRoles.cs">
         <DependentUpon>RoleController.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Api\v1\Services\SyncService.SyncKeys.cs">
+        <DependentUpon>SyncService.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 

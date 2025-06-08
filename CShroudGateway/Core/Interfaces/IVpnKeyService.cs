@@ -6,6 +6,8 @@ namespace CShroudGateway.Core.Interfaces;
 
 public interface IVpnKeyService
 {
+    StructKey? GetKeyStruct(Key key, uint vpnLevel);
+    
     Task<Result> ForceAddKeyAsync(Key key, uint vpnLevel);
     Task<Result> AddKeyAsync(Key key, User user);
     

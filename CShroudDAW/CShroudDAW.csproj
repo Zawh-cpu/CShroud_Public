@@ -41,7 +41,18 @@
 
     <ItemGroup>
         <Protobuf Include="Infrastructure\Cores\Xray\Protos\**\*.proto" GrpcServices="Client" ProtoRoot="Infrastructure/Cores/Xray/Protos/" />
+        <Protobuf Include="Infrastructure\Protos\**\*.proto" GrpcServices="Client" ProtoRoot="Infrastructure\Protos\" />
         <Protobuf Include="Presentation\Protos\**\*.proto" GrpcServices="Server" ProtoRoot="Presentation/Protos/" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Compile Update="Presentation\Services\KeyService.AddKey.cs">
+        <DependentUpon>KeyService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Presentation\Services\KeyService.DelKey.cs">
+        <DependentUpon>KeyService.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

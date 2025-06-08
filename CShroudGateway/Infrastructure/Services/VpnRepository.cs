@@ -33,7 +33,7 @@ public class VpnRepository : IVpnRepository
 
             return response;
         }
-        catch (RpcException ex)
+        catch (RpcException)
         {
         }
 

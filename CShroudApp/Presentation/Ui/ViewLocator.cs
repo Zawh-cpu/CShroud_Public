@@ -20,10 +20,6 @@ public class ViewLocator : IDataTemplate
 
         if (type != null)
         {
-            Console.WriteLine("FOUND IT!");
-            Console.WriteLine(data);
-            Console.WriteLine(name);
-            Console.WriteLine(type);
             return (Control)Activator.CreateInstance(type)!;
         }
         else

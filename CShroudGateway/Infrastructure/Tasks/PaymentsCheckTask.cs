@@ -76,7 +76,7 @@ public class PaymentsCheckTask : IPlannedTask
                 ExtraData = JsonSerializer.SerializeToDocument(new Dictionary<string, object>()
                 {
                     ["daysLeft"] = (user.PayedUntil - currentTime).Value.Days,
-                    ["rateName"] = user.Rate!.Name,
+                    ["rateName"] = user.Rate!.Name!,
                     ["needsToPay"] = user.Rate.Cost,
                 })
             });

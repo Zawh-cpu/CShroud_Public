@@ -24,6 +24,7 @@
       <PackageReference Include="Avalonia.Svg.Skia" Version="11.3.0" />
       <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+      <PackageReference Include="MessagePack" Version="3.1.3" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.5" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.2.25163.2" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.4" />
@@ -35,6 +36,7 @@
       <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="ReactiveUI" Version="20.2.45" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -58,6 +60,8 @@
         <None Update="Binaries\Cores\SingBox\Windows64\sing-box.exe">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <Compile Remove="Infrastructure\Services\CacheManager.cs" />
+        <None Include="Infrastructure\Services\CacheManager.cs" />
     </ItemGroup>
     
     <ItemGroup>

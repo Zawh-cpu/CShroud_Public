@@ -22,6 +22,20 @@ public class VpnKeyService : IVpnKeyService
         _baseRepository = baseRepository;
         _vpnRepository = vpnRepository;
     }
+
+    public StructKey? GetKeyStruct(Key key, uint vpnLevel)
+    {
+        if (!_protocolMappers.TryGetValue(key.Protocol, out var mapper))
+            return null;
+        
+        return new StructKey()
+        {
+            Id = key.Id.ToString(),
+            VpnLevel = vpnLevel,
+            Protocol = key.Protocol.ToString(),
+            Options = mapper(key.Id)
+        };
+    }
     
     public async Task<Result> ForceAddKeyAsync(Key key, uint vpnLevel)
     {

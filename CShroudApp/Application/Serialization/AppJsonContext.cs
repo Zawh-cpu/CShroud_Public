@@ -7,6 +7,8 @@ namespace CShroudApp.Application.Serialization;
 [JsonSerializable(typeof(FastLoginDto))]
 [JsonSerializable(typeof(SignInDto))]
 [JsonSerializable(typeof(QuickAuthSessionDto))]
+[JsonSerializable(typeof(ActionRefreshDto))]
+[JsonSerializable(typeof(GetUserDto))]
 public partial class AppJsonContext : JsonSerializerContext
 {
 }

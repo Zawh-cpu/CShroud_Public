@@ -15,6 +15,8 @@ ApplicationConfig config = builder.Configuration.Get<ApplicationConfig>()!;
 builder.Services.AddSingleton<IProcessManager, ProcessManager>();
 builder.Services.AddTransient<IProcessFactory, ProcessFactory>();
 builder.Services.AddSingleton<IVpnKeyService, VpnKeyService>();
+builder.Services.AddSingleton<IGrpcPool, GrpcPool>();
+builder.Services.AddSingleton<ISyncService, SyncService>();
 
 switch (config.Vpn.RuntimeCode)
 {
@@ -33,5 +35,16 @@ app.MapGrpcService<KeyService>();
 
 var vpnCore = app.Services.GetRequiredService<IVpnCore>();
 vpnCore.Enable();
+
+var syncService = app.Services.GetRequiredService<ISyncService>();
+Task.Run(async () =>
+{
+    await Task.Delay(7000);
+    var res = await syncService.SyncKeys(config.GatewayAddress, config.SecretKey);
+    if (res.IsSuccess)
+        Console.WriteLine($"[SYNC] Sync keys completed. Successfully synced {res.Value.KeysSynced}/{res.Value.KeysCount} keys.");
+    else
+        Console.WriteLine($"[SYNC] Sync keys failed.");
+});
 
 app.Run();

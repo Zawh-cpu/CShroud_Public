@@ -1,11 +1,6 @@
 ﻿using System.Security.Claims;
 using Ardalis.Result;
 using CShroudGateway.Core.Constants;
-using CShroudGateway.Core.Entities;
-using CShroudGateway.Infrastructure.Data.Entities;
-using CShroudGateway.Presentation.Api.v1.DataAnnotations;
-using CShroudGateway.Presentation.Api.v1.Responses;
-using CShroudGateway.Presentation.DeprecatedApi.gRPC.v1.Protos;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

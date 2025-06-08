@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using CShroudGateway.Application.DTOs.Keys;
 using CShroudGateway.Core.Entities;
 using CShroudGateway.Core.Interfaces;
 using CShroudGateway.Infrastructure.Data;
@@ -37,7 +38,7 @@ public class BaseRepository : IBaseRepository
         return await query.FirstOrDefaultAsync();
     }
 
-    public Task<User?> GetUserByExpressionAsync(Expression<Func<User, bool>> predicate, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers)
+    public async Task<User?> GetUserByExpressionAsync(Expression<Func<User, bool>> predicate, params Func<IQueryable<User>, IQueryable<User>>[] queryModifiers)
     {
         IQueryable<User> query = _context.Users.Where(predicate);
         
@@ -46,7 +47,28 @@ public class BaseRepository : IBaseRepository
             query = modifier(query);
         }
         
-        return query.FirstOrDefaultAsync();
+        return await query.FirstOrDefaultAsync();
+    }
+
+    public async Task<Server?> GetServerByExpressionAsync(Expression<Func<Server, bool>> predicate, params Func<IQueryable<Server>, IQueryable<Server>>[] queryModifiers)
+    {
+        IQueryable<Server> query = _context.Servers.Where(predicate);
+        
+        foreach (var modifier in queryModifiers)
+        {
+            query = modifier(query);
+        }
+        
+        return await query.FirstOrDefaultAsync();
+    }
+
+    public async Task<KeyWithVpnLevel[]> GetKeysWithVpnLevelByExpressionAsync(Expression<Func<Key, bool>> predicate)
+    {
+        return await _context.Keys
+            .Where(predicate)
+            .Select(k => new KeyWithVpnLevel(k, k.User!.Rate!.VpnLevel))
+            .AsNoTracking()
+            .ToArrayAsync();
     }
 
     public Task<Token?> GetTokenByIdAsync(Guid tokenId)

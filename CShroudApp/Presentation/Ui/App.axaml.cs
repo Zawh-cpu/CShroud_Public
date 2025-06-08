@@ -28,6 +28,8 @@ public partial class App : Avalonia.Application
             provider = DependencyInjectionConfiguration.GetProvider();
         }
         
+        EventConfigurator.Configure(provider);
+        
         var vm = provider.GetService<MainWindowViewModel>();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

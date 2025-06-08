@@ -25,15 +25,19 @@ public partial class FastLoginViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly IApiRepository _apiRepository;
     private readonly IQuickAuthService _quickAuthService;
+    private readonly ISessionManager _sessionManager;
     
-    public FastLoginViewModel(INavigationService navigationService, IApiRepository apiRepository, IQuickAuthService quickAuthService)
+    public FastLoginViewModel(INavigationService navigationService, IApiRepository apiRepository, IQuickAuthService quickAuthService, ISessionManager sessionManager)
     {
         _quickAuthService = quickAuthService;
         _quickAuthService.OnSessionCreated += OnSessionCreated;
         _quickAuthService.OnSessionFailed += OnSessionFailed;
+        _quickAuthService.OnAttemptSuccess += OnAttemptSuccess;
+        _quickAuthService.OnAttemptDeclined += OnAttemptDeclined;
         
         _navigationService = navigationService;
         _apiRepository = apiRepository;
+        _sessionManager = sessionManager;
         
         OpenTelegramCommand = new RelayCommand(() => OpenTelegram(_quickAuthSessionDto.Variants, _quickAuthSessionDto.SessionId.ToString()));
         GoBackCommand = new RelayCommand(() => BackToAuth());
@@ -47,19 +51,19 @@ public partial class FastLoginViewModel : ViewModelBase
 
     public override void OnNavigated()
     {
-        Console.WriteLine("OnNavigated ---");
         var cts = new CancellationTokenSource();
         _quickAuthService.RunSession(cts.Token);
     }
     
     private void OnSessionFailed()
     {
-        Console.WriteLine("fOnSessionFailed");
+        Console.WriteLine("OnSessionFailed");
     }
     
-    private void OnAttemptSuccess()
+    private void OnAttemptSuccess(object? sender, SignInDto session)
     {
-        Console.WriteLine("OnAttemptSuccess");
+        _sessionManager.RefreshToken = session.RefreshToken;
+        _navigationService.GoTo<DashBoardViewModel>();
     }
     
     private void OnAttemptDeclined()
@@ -74,7 +78,7 @@ public partial class FastLoginViewModel : ViewModelBase
 
     public void OpenTelegram(uint[] variants, string fastLoginId)
     {
-        var data = $"verify_{fastLoginId}_{string.Join("_", variants)}";
+        var data = $"verify_{fastLoginId}";
         
         var url = $"https://t.me/VeryRichBitchBot?start={Convert.ToBase64String(Encoding.UTF8.GetBytes(data))}";
         try

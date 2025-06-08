@@ -18,6 +18,9 @@ public class ApplicationConfig
 {
     public DebugMode DebugMode { get; set; } = DebugMode.None;
     public VpnSettings Vpn { get; set; } = new VpnSettings();
+    
+    public string GatewayAddress { get; set; } = string.Empty;
+    public string SecretKey { get; set; } = string.Empty;
 
     public class VpnSettings
     {

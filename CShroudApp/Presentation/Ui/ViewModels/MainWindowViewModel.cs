@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CShroudApp.Core.Interfaces;
 using CShroudApp.Presentation.Interfaces;
 using CShroudApp.Presentation.Services;
 using CShroudApp.Presentation.Ui.ViewModels.Auth;
@@ -25,7 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private ViewModelBase _currentView = null!;
 
-    public MainWindowViewModel(INavigationService navigationService)
+    public MainWindowViewModel(INavigationService navigationService, ISessionManager sessionManager)
     {
         navigationService.ViewModelChanged += ChangeWindow;
 
@@ -33,8 +34,11 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             navigationService.GoTo<AuthViewModel>();
         });
-        
-        navigationService.GoTo<AuthViewModel>();
+
+        if (sessionManager.RefreshToken is not null)
+            navigationService.GoTo<DashBoardViewModel>();
+        else
+            navigationService.GoTo<AuthViewModel>();
     }
 
     public void ChangeWindow(object? sender, ViewModelBase view)
