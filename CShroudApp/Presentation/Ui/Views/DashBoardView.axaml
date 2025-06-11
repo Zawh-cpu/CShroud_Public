@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
+        xmlns:converters="clr-namespace:CShroudApp.Presentation.Ui.Converters"
         mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
         x:Class="CShroudApp.Presentation.Ui.Views.DashBoardView"
         Background="#0f0f0f">
@@ -22,6 +23,10 @@
                         </Setter>
                 </Style>
         </UserControl.Styles>
+        
+        <UserControl.Resources>
+                <converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
+        </UserControl.Resources>
         
         <Grid RowDefinitions="Auto, Auto, *, Auto">
                 <Grid >
@@ -109,7 +114,7 @@
                                                                 </Grid>
                                                         </Grid>
                                                 </Border>
-                                                <Border Grid.Column="2" BorderThickness="1" CornerRadius="25" Padding="14" Background="#1B1B1D">
+                                                <!--<Border Grid.Column="2" BorderThickness="1" CornerRadius="25" Padding="14" Background="#1B1B1D">
                                                         <Grid RowDefinitions="Auto, 7, Auto">
                                                                 <TextBlock  FontWeight="Medium" FontSize="14" Foreground="#565658">Mode chosen</TextBlock>
                                                                 <Grid Grid.Row="2" ColumnDefinitions="Auto, *, Auto">
@@ -125,6 +130,42 @@
                                                                                 </TextBlock>
                                                                         </StackPanel>
                                                                 </Grid>
+                                                        </Grid>
+                                                </Border>-->
+                                                
+                                                <Border Grid.Column="2" BorderThickness="1" CornerRadius="25" Padding="14" Background="#1B1B1D">
+                                                        <Grid RowDefinitions="Auto, 7, Auto">
+                                                                <TextBlock  FontWeight="Medium" FontSize="14" Foreground="#565658">Mode chosen</TextBlock>
+                                                                <ComboBox SelectedItem="{Binding SelectedMode, Mode=TwoWay}" ItemsSource="{Binding ModesForView}" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectedIndex="0">
+                                                                        <ComboBox.Background>
+                                                                                Transparent
+                                                                        </ComboBox.Background>
+                                                                        <ComboBox.BorderBrush>Transparent</ComboBox.BorderBrush>
+                                                                        
+                                                                        <ComboBox.ItemTemplate>
+                                                                                <DataTemplate>
+                                                                                        <Grid ColumnDefinitions="Auto, *, Auto">
+                                                                                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="#FFF" Text="{Binding Name}"/>
+                                                                                                <StackPanel Grid.Column="2">
+                                                                                                        <TextBlock VerticalAlignment="Center" FontWeight="Medium" FontSize="10" Foreground="#545454" Text="{Binding HttpPort, StringFormat=HTTP: {0}, TargetNullValue=''}"/>
+                                                                                                        <TextBlock VerticalAlignment="Center" FontWeight="Medium" FontSize="10" Foreground="#545454" Text="{Binding SocksPort, StringFormat=SOCKS: {0}, TargetNullValue=''}"/>
+                                                                                                </StackPanel>
+                                                                                        </Grid>
+                                                                                </DataTemplate>
+                                                                        </ComboBox.ItemTemplate>
+
+                                                                        <ComboBox.SelectionBoxItemTemplate>
+                                                                                <DataTemplate>
+                                                                                        <Grid ColumnDefinitions="Auto, *, Auto">
+                                                                                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="#FFF" Text="{Binding Name}"/>
+                                                                                                <StackPanel Grid.Column="2">
+                                                                                                        <TextBlock VerticalAlignment="Center" FontWeight="Medium" FontSize="10" Foreground="#545454" Text="{Binding HttpPort, StringFormat=HTTP: {0}, TargetNullValue=''}"/>
+                                                                                                        <TextBlock VerticalAlignment="Center" FontWeight="Medium" FontSize="10" Foreground="#545454" Text="{Binding SocksPort, StringFormat=SOCKS: {0}, TargetNullValue=''}"/>
+                                                                                                </StackPanel>
+                                                                                        </Grid>
+                                                                                </DataTemplate>
+                                                                        </ComboBox.SelectionBoxItemTemplate>
+                                                                </ComboBox>
                                                         </Grid>
                                                 </Border>
                                         </Grid>

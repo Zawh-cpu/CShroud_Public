@@ -115,10 +115,18 @@ public class VpnService : IVpnService
         await _vpnCore.EnableAsync();
     }
 
-
-    public Task DisableAsync()
+    public async Task RestartAsync(VpnMode mode)
     {
-        throw new NotImplementedException();
+        await DisableAsync();
+        await EnableAsync(mode);
+
+        CurrentMode = VpnMode.Disabled;
+    }
+
+
+    public async Task DisableAsync()
+    {
+        await _vpnCore.DisableAsync();
     }
 
     private void OnVpnEnabled(object? sender, EventArgs e)
@@ -142,6 +150,7 @@ public class VpnService : IVpnService
 
     private void OnVpnDisabled(object? sender, EventArgs e)
     {
+        _proxyManager.DisableAsync("", new List<string>());
         VpnDisabled?.Invoke(sender, e);
     }
 }

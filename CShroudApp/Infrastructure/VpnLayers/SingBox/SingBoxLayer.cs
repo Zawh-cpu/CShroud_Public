@@ -24,9 +24,12 @@ public partial class SingBoxLayer : IVpnCoreLayer
     
     public bool IsProtocolSupported(VpnProtocol protocol) => SupportedProtocols.Contains(protocol);
 
-    private readonly BaseProcess _process;
+    private BaseProcess _process;
     
     private SingBoxConfig _configuration = new();
+
+    private readonly IProcessFactory _processFactory;
+    private readonly SettingsConfig _settings;
     
     private readonly Dictionary<VpnProtocol, Func<IVpnBound, SingBoxConfig.BoundObject>> _vpnProtocolsHandlers = new()
     {
@@ -37,6 +40,14 @@ public partial class SingBoxLayer : IVpnCoreLayer
     };
     
     public SingBoxLayer(IProcessFactory processFactory, IOptions<SettingsConfig> settings)
+    {
+        _processFactory = processFactory;
+        _settings = settings.Value;
+
+        _process = MakeStartupProcess(_processFactory, _settings);
+    }
+
+    private BaseProcess MakeStartupProcess(IProcessFactory processFactory, SettingsConfig settings)
     {
         string runtimeName;
         switch (PlatformService.GetPlatform())
@@ -62,11 +73,13 @@ public partial class SingBoxLayer : IVpnCoreLayer
             CreateNoWindow = false
         };
         
-        _process = processFactory.Create(processStartInfo, settings.Value.DebugMode);
-        _process.ProcessExited += OnProcessExited;
-        _process.ProcessStarted += OnProcessStarted;
-    }
+        var process = processFactory.Create(processStartInfo, settings.DebugMode);
+        process.ProcessExited += OnProcessExited;
+        process.ProcessStarted += OnProcessStarted;
 
+        return process;
+    }
+    
     public void AddInbound(IVpnBound bound, int index = Int32.MaxValue)
     {
         if (!_vpnProtocolsHandlers.TryGetValue(bound.Type, out var action)) throw new NotSupportedException();
@@ -98,6 +111,7 @@ public partial class SingBoxLayer : IVpnCoreLayer
     public async Task StartProcessAsync()
     {
         if (IsRunning) return;
+        if (_process.HasExited) _process = MakeStartupProcess(_processFactory, _settings);
 
         var settings = new JsonSerializerSettings
         {
@@ -168,6 +182,7 @@ public partial class SingBoxLayer : IVpnCoreLayer
     public async Task KillProcessAsync()
     {
         if (!IsRunning) return;
+        _configuration = new SingBoxConfig();
         await _process.KillAsync();
     }
 

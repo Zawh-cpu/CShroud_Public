@@ -47,6 +47,8 @@ public class VpnCore : IVpnCore
         if (IsRunning)
         {
             await _vpnCoreLayer.KillProcessAsync();
+            Console.WriteLine("PROCESS KILLED");
+            
         }
     }
 

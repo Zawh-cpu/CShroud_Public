@@ -8,7 +8,8 @@ public interface IProcess
     Task KillAsync();
     
     bool IsRunning { get; }
-    
+    bool HasExited { get; }
+
     public StreamWriter StandardInput { get; }
     
     event EventHandler ProcessExited;

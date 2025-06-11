@@ -6,9 +6,11 @@ namespace CShroudApp.Infrastructure.Services;
 
 public class BaseProcess : IProcess
 {
-    private readonly Process _process;
+    private Process _process;
     public bool IsRunning => _isRunning;
     private bool _isRunning = false;
+    private bool _hasExited = false;
+    public bool HasExited => _hasExited;
 
     public event EventHandler ProcessExited = delegate { };
     public event EventHandler ProcessStarted = delegate { };
@@ -76,8 +78,8 @@ public class BaseProcess : IProcess
     
     private void OnProcessExited(object sender, EventArgs e)
     {
-        Console.WriteLine($"PROCESS EXITED CODE -> {_process.ExitCode}");
         _isRunning = false;
+        _hasExited = true;
         ProcessExited?.Invoke(this, EventArgs.Empty);
     }
 }

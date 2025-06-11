@@ -41,6 +41,7 @@
 
     <ItemGroup>
       <Folder Include="Binaries\Cores\SingBox\LinuxX64\" />
+      <Folder Include="Infrastructure\Processes\" />
       <Folder Include="Presentation\Ui\Models\" />
     </ItemGroup>
 

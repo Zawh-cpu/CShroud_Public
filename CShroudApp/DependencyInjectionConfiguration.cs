@@ -1,4 +1,6 @@
-﻿using CShroudApp.Application.Factories;
+﻿using System.Text.Json;
+using CShroudApp.Application.Factories;
+using CShroudApp.Application.Serialization;
 using CShroudApp.Core.Entities.Vpn;
 using CShroudApp.Core.Interfaces;
 using CShroudApp.Infrastructure.Data.Config;
@@ -25,13 +27,26 @@ public static class DependencyInjectionConfiguration
     {
         if (_provider is not null) return _provider;
         
+        var directory = Path.GetDirectoryName(GlobalConstants.DataFilePath);
+        if (directory is not null && !Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+        if (!File.Exists(GlobalConstants.ApplicationConfigPath))
+        {
+            Console.WriteLine("Application config file doesn't exist");
+            var json = JsonSerializer.Serialize(SettingsConfig.MakeDefault(), AppJsonContext.Default.SettingsConfig);
+        
+            File.WriteAllText(GlobalConstants.ApplicationConfigPath, json);
+        }
+        
+        Console.WriteLine(GlobalConstants.ApplicationConfigPath);
+        
         var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false)
+            .AddJsonFile(GlobalConstants.ApplicationConfigPath, optional: false)
             .AddEnvironmentVariables()
             .Build();
         
 
-        services.Configure<SettingsConfig>(config.GetSection("Settings"));
+        services.Configure<SettingsConfig>(config);
 
         services.AddSingleton<IProcessManager, ProcessManager>();
         services.AddTransient<IProcessFactory, ProcessFactory>();

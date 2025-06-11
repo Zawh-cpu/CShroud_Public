@@ -6,6 +6,7 @@ public interface IVpnService
 {
     Task EnableAsync(VpnMode mode);
     Task DisableAsync();
+    Task RestartAsync(VpnMode mode);
     
     bool IsRunning { get; }
     

@@ -1,31 +1,34 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using CShroudApp.Application.Serialization;
 using CShroudApp.Core.Interfaces;
+using CShroudApp.Infrastructure.Data.Config;
 using MessagePack;
+using Microsoft.Extensions.Options;
 
 
 namespace CShroudApp.Infrastructure.Services;
 
 public class StorageManager : IStorageManager
 {
-    private static readonly string AppFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CrimsonShroud");
-    private static readonly string DataFilePath = Path.Combine(AppFolderPath, "data.cache");
-
     private Dictionary<string, object> _storage;
-
-    public StorageManager()
+    private SettingsConfig _settingsConfig;
+    
+    public StorageManager(IOptions<SettingsConfig> settingsConfig)
     {
         _storage = Load();
+        _settingsConfig = settingsConfig.Value;
     }
     
     public Dictionary<string, object> Load()
     {
-        Console.WriteLine(DataFilePath);
-        if (!File.Exists(DataFilePath))
+        Console.WriteLine(GlobalConstants.DataFilePath);
+        if (!File.Exists(GlobalConstants.DataFilePath))
             return new Dictionary<string, object>();
 
-        byte[] encrypted = File.ReadAllBytes(DataFilePath);
+        byte[] encrypted = File.ReadAllBytes(GlobalConstants.DataFilePath);
 
         var deserialized = MessagePackSerializer.Typeless.Deserialize(Decrypt(encrypted, GetEncryptionKey()))
             as Dictionary<string, object>;
@@ -42,8 +45,8 @@ public class StorageManager : IStorageManager
     
     public static void ClearToken()
     {
-        if (File.Exists(DataFilePath))
-                File.Delete(DataFilePath);
+        if (File.Exists(GlobalConstants.DataFilePath))
+                File.Delete(GlobalConstants.DataFilePath);
     }
 
         // AES-шифрование
@@ -96,16 +99,27 @@ public class StorageManager : IStorageManager
             await SaveChanges();
     }
 
+    public async Task SaveConfigAsync()
+    {
+        var directory = Path.GetDirectoryName(GlobalConstants.DataFilePath);
+        if (directory is not null && !Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+        
+        var json = JsonSerializer.Serialize(_settingsConfig, AppJsonContext.Default.SettingsConfig);
+        
+        await File.WriteAllTextAsync(GlobalConstants.ApplicationConfigPath, json);
+    }
+
     public async Task SaveChanges()
     {
         var data = MessagePackSerializer.Typeless.Serialize(_storage);
-        var directory = Path.GetDirectoryName(DataFilePath);
+        var directory = Path.GetDirectoryName(GlobalConstants.DataFilePath);
         if (directory is not null && !Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
         }
             
-        await File.WriteAllBytesAsync(DataFilePath, Encrypt(data, GetEncryptionKey()));
+        await File.WriteAllBytesAsync(GlobalConstants.DataFilePath, Encrypt(data, GetEncryptionKey()));
     }
 
     public string? RefreshToken
