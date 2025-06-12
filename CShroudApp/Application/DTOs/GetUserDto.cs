@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using CShroudApp.Core.Entities.User;
+﻿using CShroudApp.Core.Entities.User;
 
 namespace CShroudApp.Application.DTOs;
 

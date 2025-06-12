@@ -4,8 +4,8 @@ namespace CShroudApp.Core.Entities;
 
 public class Token
 {
-    public string Data;
-    public DateTime Expiration;
+    public required string Data;
+    public required DateTime Expiration;
 
     public static Token Parse(string jwt)
     {

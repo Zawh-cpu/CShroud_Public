@@ -11,4 +11,7 @@ public interface ISessionManager
     public Task<Result<User>> UpdateSession();
     
     public string? RefreshToken { get; set; }
+    public string? ActionToken { set; }
+
+    event EventHandler? UnauthorizedSession;
 }

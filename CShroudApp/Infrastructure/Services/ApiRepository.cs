@@ -1,177 +1,208 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Ardalis.Result;
 using CShroudApp.Application.DTOs;
-using CShroudApp.Application.Serialization;
 using CShroudApp.Core.Entities;
-using CShroudApp.Core.Entities.User;
-using CShroudApp.Core.Entities.Vpn;
 using CShroudApp.Core.Interfaces;
-using CShroudApp.Core.Shared;
-using Newtonsoft.Json.Linq;
+using CShroudApp.Core.JsonContexts;
 
 namespace CShroudApp.Infrastructure.Services;
 
 public class ApiRepository : IApiRepository
 {
-    private readonly HttpClient _httpClient;
-    private readonly IEventManager _eventManager;
-
+    public DateTime LastInternetInterrupt = DateTime.MinValue;
+    
+    private bool CanMakeRequest => LastInternetInterrupt - DateTime.UtcNow < TimeSpan.FromSeconds(45);
+    private HttpClient _client;
+    private INotificationManager _notificationManager;
+    
     private Token? _refreshToken;
-    private Token? _accessToken;
-
-    public string? ActionToken
-    {
-        get
-        {
-            if (_accessToken is null || _accessToken?.Expiration <= DateTime.Now)
-            {
-                var token = Task.Run(RefreshActionTokenAsync).Result;
-                if (!token.IsSuccess)
-                    return null;
-                _accessToken = Token.Parse(token.Value.ActionToken);
-            }
-            
-            return _accessToken?.Data;
-        }
-    }
-
+    private Token? _actionToken;
+    
     public string? RefreshToken
     {
         get => _refreshToken?.Data;
         set => _refreshToken = Token.Parse(value!);
     }
-
-    public ApiRepository(IHttpClientFactory httpClientFactory, IEventManager eventManager)
+    
+    public string? ActionToken
     {
-        _httpClient = httpClientFactory.CreateClient("CrimsonShroudApiHook");
-        _eventManager = eventManager;
+        get
+        {
+            if (_refreshToken is null) return null;
+            if (_actionToken is null || _actionToken?.Expiration - DateTime.UtcNow <= TimeSpan.FromSeconds(10) )
+            {
+                var token = Task.Run(async() => await RefreshActionTokenAsync(RefreshToken!)).Result;
+                if (!token.IsSuccess)
+                    return null;
+                _actionToken = Token.Parse(token.Value.ActionToken);
+            }
+            
+            return _actionToken?.Data;
+        }
+        set
+        {
+            if (value is not null)
+                _actionToken = Token.Parse(value);
+        }
+    }
+
+    public ApiRepository(IHttpClientFactory httpClientFactory, INotificationManager notificationManager)
+    {
+        _client = httpClientFactory.CreateClient("CrimsonShroudApiHook");
+        _notificationManager = notificationManager;
     }
     
-    private bool RequireToken()
+    private void OnInternetConnectionLoss()
     {
-        var token = ActionToken;
-        if (token is null)
+        LastInternetInterrupt = DateTime.UtcNow;
+        
+        _notificationManager.OnInternetInterrupt();
+    }
+    
+    private async Task<Result<HttpResponseMessage>> MakeRequestAsync(HttpRequestMessage request)
+    {
+        if (!CanMakeRequest) return Result.Unavailable();
+        
+        HttpResponseMessage response = null!;
+        
+        try
         {
-            _eventManager.CallAuthSessionExpired();
-            return false;
+            response = await _client.SendAsync(request);
+            if (LastInternetInterrupt != DateTime.MinValue)
+            {
+                LastInternetInterrupt = DateTime.MinValue;
+                _notificationManager.OnInternetConnectionRestored();
+            }
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == null)
+            {
+                OnInternetConnectionLoss();
+                return Result.Unavailable();
+            }
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {   
+            return Result.Error();
         }
         
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        return true;
+        return response;
     }
 
-    public async Task<Result<ActionRefreshDto>> RefreshActionTokenAsync()
+    public async Task<Result<SignInDto>> SignInAsync(string username, string password)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/auth/refresh");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", RefreshToken);
-        var response = await _httpClient.SendAsync(request);
-        if (!response.IsSuccessStatusCode) return Result.Unauthorized();
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/signin");
+        request.Content = new StringContent(JsonSerializer.Serialize<SignInDataDto>(new SignInDataDto { Login = username, Password = password}, DtoJsonContext.Default.SignInDataDto), Encoding.UTF8, "application/json");
         
-        var stream = await response.Content.ReadAsStreamAsync();
-        var dto = await JsonSerializer.DeserializeAsync(
-            stream, 
-            AppJsonContext.Default.ActionRefreshDto);
+        var response = await MakeRequestAsync(request);
+        if (!response.IsSuccess) return response.Map();
         
-        if (dto is null) return Result.CriticalError();
+        var stream = await response.Value.Content.ReadAsStreamAsync();
         
+        var dto = await JsonSerializer.DeserializeAsync(stream, DtoJsonContext.Default.SignInDto);
+        if (dto is null) return Result.Error();
+
         return dto;
     }
     
-    async public Task<VpnNetworkCredentials?> ConnectToVpnNetworkAsync(List<VpnProtocol> supportedProtocols, string location)
+    public async Task<Result<QuickAuthSessionDto>> BeginQuickAuthSessionAsync()
     {
-        return new VpnNetworkCredentials()
+        var response = await MakeRequestAsync(new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/quick-auth"));
+        if (!response.IsSuccess) return response.Map();
+        
+        var stream = await response.Value.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(stream, DtoJsonContext.Default.QuickAuthSessionDto);
+        if (dto is null) return Result.Error();
+
+        return dto;
+    }
+    
+    public async Task<Result<SignInDto>> FinalizeQuickAuthSessionAsync(QuickAuthDto data)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/auth/quick-auth/{data.SessionId}/finalize");
+        request.Content = new StringContent(data.SecretLoginCode, Encoding.UTF8);
+        
+        var response = await MakeRequestAsync(request);
+        if (!response.IsSuccess) return response.Map();
+        
+        var stream = await response.Value.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(stream, DtoJsonContext.Default.SignInDto);
+        if (dto is null) return Result.Error();
+
+        return dto;
+    }
+    
+    public async Task<Result<ActionTokenRefreshDto>> RefreshActionTokenAsync(string refreshToken)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/auth/refresh");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshToken);
+        
+        var response = await MakeRequestAsync(request);
+        if (!response.IsSuccess) return response.Map();
+        
+        var stream = await response.Value.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(stream, DtoJsonContext.Default.ActionTokenRefreshDto);
+        if (dto is null) return Result.Error();
+
+        return dto;
+    }
+    
+    public async Task<Result<GetUserDto>> GetUserInformationAsync()
+    {
+        var token = ActionToken;
+        if (token is null) return Result.Unavailable();
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/user/me");
+        
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        var response = await MakeRequestAsync(request);
+        if (!response.IsSuccess) return response.Map();
+        
+        var stream = await response.Value.Content.ReadAsStreamAsync();
+        var dto = await JsonSerializer.DeserializeAsync(stream, DtoJsonContext.Default.GetUserDto);
+        if (dto is null) return Result.Error();
+
+        return dto;
+    }
+    
+    public async Task Test()
+    {
+        var url = "https://www.google.com";
+
+        try
         {
-            ServerHost = "localhost",
-            ServerPort = 443,
-            IPv4 = "127.0.0.1",
-            IPv6 = "::1",
-            Location = location,
-            Obtained = DateTime.UtcNow,
-            Protocol = VpnProtocol.Vless,
-            YourIPv4Address = "127.0.0.1",
-            TransparentHosts = new()
+            using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(5);
+
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
             {
-                "frankfurt.reality.zawh.ru",
-            },
-            Credentials = new JObject()
-            {
-                ["Host"] = "frankfurt.reality.zawh.ru",
-                ["Port"] = "443",
-                ["Uuid"] = "8d50da4e-fff4-4188-bbd1-7d620c7296f0",
-                ["Flow"] = "xtls-rprx-vision",
-                ["ServerName"] = "google.com",
-                ["Insecure"] = "false",
-                ["PublicKey"] = "8AZQljbSjvPMPvcjizPM4JpTmcHBPWx_stM_h0gofEI",
-                ["ShortId"] = "4ae60b64b5cd"
+                Console.WriteLine($"Success! Status code: {(int)response.StatusCode}");
             }
-        };
-    }
-
-    public async Task<Result<SignInDto>> FinalizeQuickAuthAttemptAsync(QuickAuthDto data)
-    {
-        Console.WriteLine(data.SessionId);
-        Console.WriteLine(data.SecretLoginCode);
-        var response = await _httpClient.PostAsync($"/api/v1/auth/quick-auth/{data.SessionId}/finalize", new StringContent(data.SecretLoginCode, Encoding.UTF8));
-        Console.WriteLine(response.StatusCode);
-        if (!response.IsSuccessStatusCode) return Result.Forbidden();
-        
-        if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
-        
-        var stream = await response.Content.ReadAsStreamAsync();
-        var dto = await JsonSerializer.DeserializeAsync(
-            stream, 
-            AppJsonContext.Default.SignInDto);
-
-        if (dto is null) return Result.CriticalError();
-        
-        return dto;
-    }
-
-    public async Task<Result<QuickAuthSessionDto>> CreateQuickAuthSessionAsync()
-    {
-        var response = await _httpClient.PostAsync($"/api/v1/auth/quick-auth", null);
-        if (!response.IsSuccessStatusCode) return Result.Forbidden();
-        
-        if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
-        
-        var stream = await response.Content.ReadAsStreamAsync();
-        var dto = await JsonSerializer.DeserializeAsync(
-            stream, 
-            AppJsonContext.Default.QuickAuthSessionDto);
-
-        if (dto is null) return Result.CriticalError();
-        
-        return dto;
-    }
-
-    public async Task<Result<User>> GetUserInformationAsync()
-    {
-        Console.WriteLine("GetUserInformationAsync");
-        if (!RequireToken()) return Result.Unauthorized();
-        Console.WriteLine("GETUSERINFORMATION");
-        
-        var response = await _httpClient.GetAsync($"/api/v1/user/me");
-        
-        if (response.StatusCode != HttpStatusCode.OK) return Result.Invalid();
-        
-        var stream = await response.Content.ReadAsStreamAsync();
-        var dto = await JsonSerializer.DeserializeAsync(
-            stream, 
-            AppJsonContext.Default.GetUserDto);
-
-        if (dto is null) return Result.CriticalError();
-        
-        return new User()
+            else
+            {
+                Console.WriteLine($"Failed. Status code: {(int)response.StatusCode}");
+            }
+        }
+        catch (HttpRequestException ex)
         {
-            Id = dto.Id,
-            IsVerified = dto.IsVerified,
-            Nickname = dto.Nickname,
-            Rate = dto.Rate,
-            Role = dto.Role
-        };
+            //Console.WriteLine(ex);HttpResponseMessage
+            Console.WriteLine(ex.StatusCode == null);
+            Console.WriteLine(ex.Message);
+            Console.WriteLine("Network error or no internet connection.");
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine("Request timed out (possible no internet).");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
     }
 }

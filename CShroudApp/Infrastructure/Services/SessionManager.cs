@@ -10,7 +10,11 @@ public class SessionManager : ISessionManager
     private readonly IApiRepository _apiRepository;
     private readonly IStorageManager _storageManager;
     
-    private User _session = null!;
+    private User _session = User.Unauthenticated();
+    public DateTime SessionExpires { get; private set; } = DateTime.MinValue;
+
+    public event EventHandler? UnauthorizedSession;
+    
     public User Session
     {
         get
@@ -25,14 +29,14 @@ public class SessionManager : ISessionManager
                 }
                 else
                 {
-                    _session = User.Unauthenticated();
+                    UnauthorizedSession?.Invoke(this, EventArgs.Empty);
+                    return User.Unauthenticated();
                 }
-                
-                return _session;
             }
             
             return _session;
         }
+        
         set => _session = value;
     }
     
@@ -49,7 +53,10 @@ public class SessionManager : ISessionManager
         }
     }
 
-    public DateTime SessionExpires { get; private set; } = DateTime.MinValue;
+    public string? ActionToken
+    {
+        set => _apiRepository.ActionToken = value;
+    }
 
     public SessionManager(IApiRepository apiRepository, IStorageManager storageManager)
     {
@@ -69,10 +76,15 @@ public class SessionManager : ISessionManager
     {
         var result = await _apiRepository.GetUserInformationAsync();
         if (!result.IsSuccess)
-        {
             return result.Map();
-        }
         
-        return result.Value;
+        return new User()
+        {
+            Id = result.Value.Id,
+            IsVerified = result.Value.IsVerified,
+            Nickname = result.Value.Nickname,
+            Rate = result.Value.Rate,
+            Role = result.Value.Role
+        };
     }
 }

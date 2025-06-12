@@ -1,34 +1,28 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using CShroudApp.Application.Serialization;
+using CShroudApp.Core.Configs;
 using CShroudApp.Core.Interfaces;
-using CShroudApp.Infrastructure.Data.Config;
 using MessagePack;
 using Microsoft.Extensions.Options;
-
 
 namespace CShroudApp.Infrastructure.Services;
 
 public class StorageManager : IStorageManager
 {
     private Dictionary<string, object> _storage;
-    private SettingsConfig _settingsConfig;
-    
-    public StorageManager(IOptions<SettingsConfig> settingsConfig)
+
+    public StorageManager()
     {
         _storage = Load();
-        _settingsConfig = settingsConfig.Value;
     }
     
     public Dictionary<string, object> Load()
     {
-        Console.WriteLine(GlobalConstants.DataFilePath);
-        if (!File.Exists(GlobalConstants.DataFilePath))
+        if (!File.Exists(AppConstants.CacheFilePath))
             return new Dictionary<string, object>();
 
-        byte[] encrypted = File.ReadAllBytes(GlobalConstants.DataFilePath);
+        byte[] encrypted = File.ReadAllBytes(AppConstants.CacheFilePath);
 
         var deserialized = MessagePackSerializer.Typeless.Deserialize(Decrypt(encrypted, GetEncryptionKey()))
             as Dictionary<string, object>;
@@ -43,13 +37,6 @@ public class StorageManager : IStorageManager
         return sha256.ComputeHash(Encoding.UTF8.GetBytes(deviceInfo));
     }
     
-    public static void ClearToken()
-    {
-        if (File.Exists(GlobalConstants.DataFilePath))
-                File.Delete(GlobalConstants.DataFilePath);
-    }
-
-        // AES-шифрование
     private static byte[] Encrypt(byte[] data, byte[] key)
     {
         using var aesAlg = Aes.Create();
@@ -58,22 +45,19 @@ public class StorageManager : IStorageManager
 
         using var encryptor = aesAlg.CreateEncryptor();
         byte[] encrypted = encryptor.TransformFinalBlock(data, 0, data.Length);
-
-            // Склеиваем IV + данные
+        
         byte[] result = new byte[aesAlg.IV.Length + encrypted.Length];
         Buffer.BlockCopy(aesAlg.IV, 0, result, 0, aesAlg.IV.Length);
         Buffer.BlockCopy(encrypted, 0, result, aesAlg.IV.Length, encrypted.Length);
 
         return result;
     }
-
-        // AES-дешифрование
+    
     private static byte[] Decrypt(byte[] cipherTextCombined, byte[] key)
     {
         using var aesAlg = Aes.Create();
         aesAlg.Key = key;
-
-            // Выделяем IV
+        
         byte[] iv = new byte[aesAlg.BlockSize / 8];
         Buffer.BlockCopy(cipherTextCombined, 0, iv, 0, iv.Length);
         aesAlg.IV = iv;
@@ -97,29 +81,33 @@ public class StorageManager : IStorageManager
         _storage[key] = data;
         if (saveChanges)
             await SaveChanges();
+    } 
+    
+    public async Task SetValueIfNot(string key, object data, bool saveChanges = true)
+    {
+        if (_storage.TryGetValue(key, out var value) && value == data) return;
+        _storage[key] = data;
+        if (saveChanges)
+            await SaveChanges();
     }
 
-    public async Task SaveConfigAsync()
+    public async Task DelValue(string key, bool saveChanges = true)
     {
-        var directory = Path.GetDirectoryName(GlobalConstants.DataFilePath);
-        if (directory is not null && !Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
-        
-        var json = JsonSerializer.Serialize(_settingsConfig, AppJsonContext.Default.SettingsConfig);
-        
-        await File.WriteAllTextAsync(GlobalConstants.ApplicationConfigPath, json);
+        _storage.Remove(key);
+        if (saveChanges)
+            await SaveChanges();
     }
 
     public async Task SaveChanges()
     {
         var data = MessagePackSerializer.Typeless.Serialize(_storage);
-        var directory = Path.GetDirectoryName(GlobalConstants.DataFilePath);
+        var directory = Path.GetDirectoryName(AppConstants.CacheFilePath);
         if (directory is not null && !Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
         }
             
-        await File.WriteAllBytesAsync(GlobalConstants.DataFilePath, Encrypt(data, GetEncryptionKey()));
+        await File.WriteAllBytesAsync(AppConstants.CacheFilePath, Encrypt(data, GetEncryptionKey()));
     }
 
     public string? RefreshToken
@@ -128,7 +116,7 @@ public class StorageManager : IStorageManager
         set
         {
             if (value is not null)
-                Task.Run(() => SetValue("refreshToken", value));
+                Task.Run(() => SetValueIfNot("refreshToken", value));
         }
     }
 }

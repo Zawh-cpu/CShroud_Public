@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CShroud", "CShroud\CShroud.csproj", "{FB85B439-2881-4B68-8445-036273981F33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CShroudApp", "CShroudApp\CShroudApp.csproj", "{F69F58E3-836E-4AF5-8415-3850BCCD0705}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CShroudGateway", "CShroudGateway\CShroudGateway.csproj", "{916C1341-F298-4504-9D89-0ACC6E482AD1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31C65111-9A67-4A55-9737-C6D9A16809B3}"
@@ -18,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certs", "Certs", "{97EF563C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{233D7402-8745-4E4D-B3A0-1E1729124FE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1Test", "WpfApp1Test\WpfApp1Test.csproj", "{6A5EC021-24BD-434C-8042-CD806D0E6193}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CShroudApp", "CShroudApp\CShroudApp.csproj", "{8551DDB2-CF27-4E1A-85B4-253F93FD1032}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,10 +30,6 @@ Global
 		{FB85B439-2881-4B68-8445-036273981F33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB85B439-2881-4B68-8445-036273981F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB85B439-2881-4B68-8445-036273981F33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F69F58E3-836E-4AF5-8415-3850BCCD0705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F69F58E3-836E-4AF5-8415-3850BCCD0705}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F69F58E3-836E-4AF5-8415-3850BCCD0705}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F69F58E3-836E-4AF5-8415-3850BCCD0705}.Release|Any CPU.Build.0 = Release|Any CPU
 		{916C1341-F298-4504-9D89-0ACC6E482AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{916C1341-F298-4504-9D89-0ACC6E482AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{916C1341-F298-4504-9D89-0ACC6E482AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,6 +42,14 @@ Global
 		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{233D7402-8745-4E4D-B3A0-1E1729124FE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A5EC021-24BD-434C-8042-CD806D0E6193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A5EC021-24BD-434C-8042-CD806D0E6193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A5EC021-24BD-434C-8042-CD806D0E6193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A5EC021-24BD-434C-8042-CD806D0E6193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8551DDB2-CF27-4E1A-85B4-253F93FD1032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8551DDB2-CF27-4E1A-85B4-253F93FD1032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8551DDB2-CF27-4E1A-85B4-253F93FD1032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8551DDB2-CF27-4E1A-85B4-253F93FD1032}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{97EF563C-6932-45E8-8064-1A3FC57720C3} = {31C65111-9A67-4A55-9737-C6D9A16809B3}
