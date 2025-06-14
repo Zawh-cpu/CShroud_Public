@@ -6,8 +6,8 @@ namespace CShroudApp.Core.Configs;
 public class ApplicationConfig
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public LogLevelMode LogLevel = LogLevelMode.Off;
-    public NetworkConfig Network = new();
+    public LogLevelMode LogLevel { get; set; } = LogLevelMode.Off;
+    public NetworkConfig Network { get; set; } = new();
     
-    public VpnConfig Vpn = new();
+    public VpnConfig Vpn { get; set; } = new();
 }

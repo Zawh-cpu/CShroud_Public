@@ -20,8 +20,9 @@ public class BaseProcess : IProcess
         _process = new Process();
         _process.StartInfo = processStartInfo;
         _process.EnableRaisingEvents = true;
-        _process.Exited += OnProcessExited!;
+        _process.Exited += OnProcessExited;
 
+        
         if (debug == LogLevelMode.Debug)
         {
             _process.OutputDataReceived += (sender, e) =>
@@ -48,6 +49,8 @@ public class BaseProcess : IProcess
 
     private void ReactivateProcess()
     {
+        Console.WriteLine("[REACTIVE PROCESS]");
+        
         var startInfo = _process.StartInfo;
         
         _process = new Process();
@@ -60,9 +63,10 @@ public class BaseProcess : IProcess
     {
         if (HasExited && reactivateProcess)
             ReactivateProcess();
-                
+        
         IsRunning = true;
         ProcessStarted?.Invoke(this, EventArgs.Empty);
+        
         _process.Start();
         _process.BeginOutputReadLine();
         _process.BeginErrorReadLine();
@@ -82,7 +86,7 @@ public class BaseProcess : IProcess
         await _process.WaitForExitAsync();
     }
     
-    private void OnProcessExited(object sender, EventArgs e)
+    private void OnProcessExited(object? sender, EventArgs? e)
     {
         IsRunning = false;
         HasExited = true;

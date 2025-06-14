@@ -2,7 +2,7 @@
 
 public class HttpBound : BoundObject
 {
-    public new string Type = "http";
+    public new string Type { get; }= "http";
     
     public required string Listen { get; set; }
     public required uint ListenPort { get; set; }

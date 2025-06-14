@@ -66,7 +66,11 @@ public class SingBoxCore : IVpnCore
             CreateNoWindow = false
         };
         
+        Console.WriteLine(Path.Combine(PathToCoreDirectory, PlatformInformation.GetFullname(), runtimeName));
+        
         _process = processFactory.Create(processStartInfo, _settings.LogLevel);
+        _process.ProcessStarted += OnProcessStarted;
+        _process.ProcessExited += OnProcessExited;
     }
 
     private void SetupLogs()
@@ -79,13 +83,15 @@ public class SingBoxCore : IVpnCore
             [LogLevelMode.Error] = "error",
             [LogLevelMode.Debug] = "debug"
         };
-        
-        _config.Log.Level = levels.GetValueOrDefault(_settings.LogLevel, "none");
+
+        _config.Log = new() { Level = levels.GetValueOrDefault(_settings.LogLevel, "none") };
     }
 
     private void SetupDns(List<string> transparedHosts)
     {
-        _config.Dns.Servers.AddRange(
+        _config.Dns = new DnsObject();
+        
+        _config.Dns.Servers = [
             new Dictionary<string, object>
             {
                 ["Tag"] = "remote",
@@ -111,9 +117,9 @@ public class SingBoxCore : IVpnCore
                 ["Address"] = "223.5.5.5",
                 ["Detour"] = "direct"
             }
-        );
+        ];
         
-        _config.Dns.Rules.AddRange(
+        _config.Dns.Rules = [
             new DnsObject.Rule()
             {
                 Server = "local_local",
@@ -123,14 +129,16 @@ public class SingBoxCore : IVpnCore
             {
                 Server = "local",
                 RuleSet = new List<string> { "geosite-cn" }
-            });
+            }];
         // CHANGE IF SPLIT TUNNELING OR WHITE_LIST
         _config.Dns.Final = "remote";
     }
 
     private void SetupInbounds()
     {
-        _config.Inbounds.AddRange(
+        _config.Inbounds = new();
+        
+        _config.Inbounds = [
             new SocksBound
             {
                 Tag = "socks",
@@ -147,7 +155,7 @@ public class SingBoxCore : IVpnCore
                 ListenPort = _settings.Vpn.Inputs.Http.Port,
                 Sniff = true,
                 SniffOverrideDestination = true
-            });
+            }];
     }
 
     private void SetupOutbounds(VpnConnectionCredentials credentials)
@@ -157,8 +165,10 @@ public class SingBoxCore : IVpnCore
 
         var mapped = mapper(credentials.Credentials);
         if (mapped == null) throw new NotSupportedException();
+
+        _config.Outbounds = new();
         
-        _config.Outbounds.AddRange(mapped,
+        _config.Outbounds = [mapped,
             new BoundObject()
             {
                 Type = "direct",
@@ -174,12 +184,14 @@ public class SingBoxCore : IVpnCore
                 Type = "dns",
                 Tag = "dns_out"
             }
-        );
+        ];
     }
 
     private void SetupRoutes()
     {
-        _config.Route.Rules.AddRange(
+        _config.Route = new RouteObject();
+        
+        _config.Route.Rules = [
             new RouteObject.RouteRule()
             {
                 Outbound = "dns_out",
@@ -223,9 +235,9 @@ public class SingBoxCore : IVpnCore
                 Outbound = "direct",
                 RuleSet = [ "geosite-cn" ]
             }
-            );
+            ];
         
-        _config.Route.RuleSet.AddRange(
+        _config.Route.RuleSet = [
             new RouteObject.RouteRuleSet()
             {
                 Tag = "geosite-private",
@@ -246,11 +258,13 @@ public class SingBoxCore : IVpnCore
                 Type = "local",
                 Format = "binary",
                 Path = Path.Combine(AppConstants.InternalGeoRulesPath, "geoip-cn.srs")
-            });
+            }];
     }
 
     private void SetupExperimental()
     {
+        _config.Experimental = new();
+        
         _config.Experimental.CacheFile = new ExperimentalObject.ExperimentalTempObject()
         {
             Enabled = true,
@@ -269,7 +283,7 @@ public class SingBoxCore : IVpnCore
         SetupExperimental();
 
         _process.Start(reactivateProcess: true);
-
+        
         if (_settings.LogLevel == LogLevelMode.Debug)
         {
             var config = JsonSerializer.Serialize(_config, SingBoxJsonContext.Default.TopConfig);
@@ -279,7 +293,18 @@ public class SingBoxCore : IVpnCore
         else
             await _process.StandardInput.WriteAsync(JsonSerializer.Serialize(_config, SingBoxJsonContext.Default.TopConfig));
         
+        _process.StandardInput.Close();
         
         return Result.Success();
+    }
+
+    private void OnProcessStarted(object? sender, EventArgs e)
+    {
+        CoreEnabled?.Invoke(this, e);
+    }
+
+    private void OnProcessExited(object? sender, EventArgs e)
+    {
+        CoreDisabled?.Invoke(this, e);
     }
 }

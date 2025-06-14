@@ -1,10 +1,13 @@
-﻿using CShroudApp.Core.Entities;
+﻿using System.Text.Json.Serialization;
+using CShroudApp.Core.Entities;
 
 namespace CShroudApp.Core.Configs;
 
 public class VpnConfig
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public VpnMode Mode { get; set; } = VpnMode.Proxy;
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public VpnCore Core { get; set; } = VpnCore.SingBox;
 
     public string PreferredProxy { get; set; } = "8.8.8.8";
@@ -14,13 +17,13 @@ public class VpnConfig
 
     public class InputsObject
     {
-        public struct Input
+        public struct InputObj
         {
-            public string Host;
-            public uint Port;
+            public string Host { get; set; }
+            public uint Port { get; set; }
         }
         
-        public Input Http { get; set; } = new() { Host = "127.0.0.1", Port = 10808 };
-        public Input Socks { get; set; } = new() { Host = "127.0.0.1", Port = 10809 };
+        public InputObj Http { get; set; } = new() { Host = "127.0.0.1", Port = 10808 };
+        public InputObj Socks { get; set; } = new() { Host = "127.0.0.1", Port = 10809 };
     }
 }

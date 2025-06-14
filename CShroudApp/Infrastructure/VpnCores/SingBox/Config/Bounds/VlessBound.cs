@@ -2,7 +2,7 @@
 
 public class VlessBound : BoundObject
 {
-    public new string Type = "vless";
+    public new string Type { get; set; }= "vless";
 
     public required string Server { get; set; }
     public required uint ServerPort { get; set; }
