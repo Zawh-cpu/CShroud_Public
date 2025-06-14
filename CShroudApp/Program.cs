@@ -1,10 +1,14 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Nodes;
 using CShroudApp;
+using CShroudApp.Application.Factories;
 using CShroudApp.Core.Configs;
+using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
 using CShroudApp.Core.JsonContexts;
 using CShroudApp.Core.Utils;
 using CShroudApp.Infrastructure.Services;
+using CShroudApp.Infrastructure.VpnCores.SingBox;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,6 +45,12 @@ builder.Services.AddSingleton<IApiRepository, ApiRepository>();
 builder.Services.AddSingleton<IStorageManager, StorageManager>();
 builder.Services.AddSingleton<ISessionManager, SessionManager>();
 builder.Services.AddSingleton<INotificationManager, NotificationManager>();
+builder.Services.AddSingleton<IProcessManager, ProcessManager>();
+builder.Services.AddSingleton<ProcessFactory>();
+builder.Services.AddSingleton<IInternalDataManager, InternalDataManager>();
+builder.Services.AddSingleton<IVpnService, VpnService>();
+
+builder.Services.AddSingleton<IVpnCore, SingBoxCore>();
 
 var app = builder.Build();
 
@@ -54,3 +64,10 @@ if (dto.IsSuccess)
     service.ActionToken = dto.Value.ActionToken;
 }
 service.UnauthorizedSession += Unauthenticated;
+
+Task.WaitAll(test.PseudoMain(app.Services));
+
+while (true)
+{
+    Task.Delay(10000).Wait();
+}

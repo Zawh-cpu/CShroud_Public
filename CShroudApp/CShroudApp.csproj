@@ -28,7 +28,23 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Binaries\Cores\SingBox\WindowsX64\" />
+      <Folder Include="Internal\GeoRules\SRSS\" />
       <Folder Include="Presentation\" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <None Update="Binaries\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Internal\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Infrastructure\VpnCores\SingBox\SingBoxLayer.cs" />
+      <None Include="Infrastructure\VpnCores\SingBox\SingBoxLayer.cs" />
     </ItemGroup>
 
 </Project>

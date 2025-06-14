@@ -6,11 +6,11 @@ public class NotificationManager : INotificationManager
 {
     public void OnInternetInterrupt()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public void OnInternetConnectionRestored()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }
