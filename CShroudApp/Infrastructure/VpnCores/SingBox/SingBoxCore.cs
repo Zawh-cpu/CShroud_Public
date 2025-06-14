@@ -124,7 +124,6 @@ public class SingBoxCore : IVpnCore
                 Server = "local",
                 RuleSet = new List<string> { "geosite-cn" }
             });
-        
         // CHANGE IF SPLIT TUNNELING OR WHITE_LIST
         _config.Dns.Final = "remote";
     }
@@ -180,68 +179,68 @@ public class SingBoxCore : IVpnCore
 
     private void SetupRoutes()
     {
-        /*_config.Route.Rules.AddRange(
-            new RouteObject.Rule()
+        _config.Route.Rules.AddRange(
+            new RouteObject.RouteRule()
             {
                 Outbound = "dns_out",
                 Protocol = [ "dns" ]
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "proxy",
                 Domain = [ "googleapis.cn", "gstatic.com" ],
                 DomainSuffix = [ ".googleapis.cn", ".gstatic.com" ]
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "block",
                 Network = [ "udp" ],
                 Port = [ 443 ]
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "direct",
                 RuleSet = [ "geosite-private" ]
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "direct",
                 IpCidr = _internalDataManager.InternalDirectIPs.ToArray()
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "direct",
                 Domain = _internalDataManager.InternalDirectDomains.ToArray(),
                 DomainSuffix = _internalDataManager.InternalDirectDomains.Select(x => "." + x).ToArray()
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "direct",
                 RuleSet = [ "geoip-cn" ]
             },
-            new RouteObject.Rule()
+            new RouteObject.RouteRule()
             {
                 Outbound = "direct",
                 RuleSet = [ "geosite-cn" ]
             }
-            );*/
+            );
         
         _config.Route.RuleSet.AddRange(
-            new RouteObject.RuleSetObject()
+            new RouteObject.RouteRuleSet()
             {
                 Tag = "geosite-private",
                 Type = "local",
                 Format = "binary",
                 Path = Path.Combine(AppConstants.InternalGeoRulesPath, "geosite-private.srs")
             },
-            new RouteObject.RuleSetObject()
+            new RouteObject.RouteRuleSet()
             {
                 Tag = "geosite-cn",
                 Type = "local",
                 Format = "binary",
                 Path = Path.Combine(AppConstants.InternalGeoRulesPath, "geosite-cn.srs")
             },
-            new RouteObject.RuleSetObject()
+            new RouteObject.RouteRuleSet()
             {
                 Tag = "geoip-cn",
                 Type = "local",
@@ -252,7 +251,7 @@ public class SingBoxCore : IVpnCore
 
     private void SetupExperimental()
     {
-        _config.Experimental["CacheFile"] = new
+        _config.Experimental.CacheFile = new ExperimentalObject.ExperimentalTempObject()
         {
             Enabled = true,
             Path = Path.Combine(PathToCoreDirectory, "cache.db")
@@ -261,27 +260,24 @@ public class SingBoxCore : IVpnCore
     
     public async Task<Result> EnableAsync(VpnMode mode, VpnConnectionCredentials credentials)
     {
-        Console.WriteLine("TRYING ENABLE IT");
-        try
-        {
-            _config = new TopConfig();
-            SetupLogs();
-            SetupDns(credentials.TransparentHosts);
-            SetupInbounds();
-            SetupOutbounds(credentials);
-            SetupRoutes();
-            //SetupExperimental();
+        _config = new TopConfig();
+        SetupLogs();
+        SetupDns(credentials.TransparentHosts);
+        SetupInbounds();
+        SetupOutbounds(credentials);
+        SetupRoutes();
+        SetupExperimental();
 
-            _process.Start(reactivateProcess: true);
+        _process.Start(reactivateProcess: true);
+
+        if (_settings.LogLevel == LogLevelMode.Debug)
+        {
             var config = JsonSerializer.Serialize(_config, SingBoxJsonContext.Default.TopConfig);
             Console.WriteLine(config);
-
             await _process.StandardInput.WriteAsync(config);
         }
-        catch (Exception e)
-        {
-            Console.WriteLine($"EXCEPTION: {e}");
-        }
+        else
+            await _process.StandardInput.WriteAsync(JsonSerializer.Serialize(_config, SingBoxJsonContext.Default.TopConfig));
         
         
         return Result.Success();

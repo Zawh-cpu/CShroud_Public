@@ -15,7 +15,7 @@ public class TopConfig
     public List<BoundObject> Outbounds { get; set; } = new();
     
     public RouteObject Route { get; set; } = new();
-    public Dictionary<string, object> Experimental { get; set; } = new();
+    public ExperimentalObject Experimental { get; set; } = new();
     
     [JsonExtensionData]
     public Dictionary<string, object> External { get; set; } = new();

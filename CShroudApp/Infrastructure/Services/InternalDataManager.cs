@@ -13,6 +13,6 @@ public class InternalDataManager : IInternalDataManager
             InternalDirectIPs.AddRange(File.ReadAllLines(AppConstants.InternalDirectIPsPath));
         
         if (File.Exists(AppConstants.InternalDirectDomainsPath))
-            InternalDirectIPs.AddRange(File.ReadAllLines(AppConstants.InternalDirectDomainsPath));
+            InternalDirectDomains.AddRange(File.ReadAllLines(AppConstants.InternalDirectDomainsPath));
     }
 }

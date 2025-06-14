@@ -2,8 +2,8 @@
 
 public class RouteObject
 {
-    public List<Rule> Rules { get; set; } = new();
-    public List<RuleSetObject> RuleSet { get; set; } = new();
+    public List<RouteRule> Rules { get; set; } = new();
+    public List<RouteRuleSet> RuleSet { get; set; } = new();
     public string? Final { get; set; }
     public bool? AutoDetectInterface { get; set; }
     public bool? OverrideAndroidVpn { get; set; }
@@ -15,7 +15,7 @@ public class RouteObject
     public List<object>? DefaultFallbackNetworkType { get; set; }
     public string? DefaultFallbackDelay { get; set; }
 
-    public class Rule
+    public class RouteRule
     {
         public required string Outbound { get; set; }
         public string[]? Protocol { get; set; }
@@ -28,7 +28,7 @@ public class RouteObject
         public bool? IpIsPrivate { get; set; }
     }
     
-    public class RuleSetObject
+    public class RouteRuleSet
     {
         public required string Tag { get; set; }
         public required string Type { get; set; }
