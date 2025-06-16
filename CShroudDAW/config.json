@@ -1,0 +1,22 @@
+{
+  "DebugMode": "Debug",
+  "Vpn": {
+    "RuntimeCore": "Xray",
+    "Cores": {
+      "Xray": {
+        "Args": "run -c ./Binaries/Cores/Xray/config.json",
+        "ApiAddress": "http://127.0.0.1:61789"
+      }
+    },
+    "Protocols": {
+      "Vless": {
+        "PrivateKey": "OFSOzwYyGVMQepQeeOrbR24GF84IMb4yav3ACVPrxWY"
+      },
+      "WireGuardOverVless": {
+        "PrivateKey": ""
+      }
+    }
+  },
+  "GatewayAddress": "https://localhost:5235/api/v1",
+  "SecretKey": "3q4FTaxY2UMEGOKAf7Ly1ug6scnVwD5eSip8oWhz9PRjCNmbZlrBtkQIXdHJv0"
+}
