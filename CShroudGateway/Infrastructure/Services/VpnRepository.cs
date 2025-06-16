@@ -20,7 +20,6 @@ public class VpnRepository : IVpnRepository
     {
         try
         {
-            Console.WriteLine("\n\n\nFAWEWEFWEF\n\n\n");
             var call = grpcMethod(request, new CallOptions());
             var response = await call.ResponseAsync;
             var status = call.GetStatus();
@@ -42,7 +41,7 @@ public class VpnRepository : IVpnRepository
     
     public async Task<Result<object>> AddKey(Server server, Guid keyId, VpnProtocol protocol, uint vpnLevel, string options)
     {
-        var channel = _grpcPool.Get("http://" + server.IpV4Address);
+        var channel = _grpcPool.Get($"https://{server.IpV4Address}:{server.DawPort}");
 
         var client = new KeyService.KeyServiceClient(channel);
 
@@ -60,7 +59,7 @@ public class VpnRepository : IVpnRepository
 
     public async Task DelKey(Server server, Guid keyId, VpnProtocol protocol)
     {
-        var channel = _grpcPool.Get("http://" + server.IpV4Address);
+        var channel = _grpcPool.Get($"https://{server.IpV4Address}:{server.DawPort}");
 
         var client = new KeyService.KeyServiceClient(channel);
 

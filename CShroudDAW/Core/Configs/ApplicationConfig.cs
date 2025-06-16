@@ -1,4 +1,6 @@
-namespace CShroudDAW.Infrastructure.Data.Config;
+using System.Text.Json.Serialization;
+
+namespace CShroudDAW.Core.Configs;
 
 public enum DebugMode
 {
@@ -16,6 +18,7 @@ public enum VpnRuntimeCore
 
 public class ApplicationConfig
 {
+    [JsonConverter(typeof(JsonStringEnumConverter<DebugMode>))]
     public DebugMode DebugMode { get; set; } = DebugMode.None;
     public VpnSettings Vpn { get; set; } = new VpnSettings();
     
@@ -24,7 +27,8 @@ public class ApplicationConfig
 
     public class VpnSettings
     {
-        public VpnRuntimeCore RuntimeCode { get; set; } = VpnRuntimeCore.Xray;
+        [JsonConverter(typeof(JsonStringEnumConverter<VpnRuntimeCore>))]
+        public VpnRuntimeCore RuntimeCore { get; set; } = VpnRuntimeCore.Xray;
         public VpnCoresValues Cores { get; set; } = new();
         public VpnProtocolAttributes Protocols { get; set; } = new();
 

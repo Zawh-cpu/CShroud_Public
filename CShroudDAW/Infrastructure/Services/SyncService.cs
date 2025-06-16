@@ -22,12 +22,11 @@ public class SyncService : ISyncService
     {
         try
         {
-            Console.WriteLine("\n\n\nFAWEWEFWEF\n\n\n");
             var call = grpcMethod(request, new CallOptions());
             var response = await call.ResponseAsync;
             var status = call.GetStatus();
 
-            Console.WriteLine($"Status: {status.StatusCode}");
+            Console.WriteLine($"[SYNC] STATUS: {status.StatusCode}");
             if (status.StatusCode != StatusCode.OK)
             {
                 return Result.Error();
@@ -35,8 +34,10 @@ public class SyncService : ISyncService
 
             return response;
         }
-        catch (RpcException)
+        catch (RpcException e)
         {
+            Console.WriteLine($"[SYNC] STATUS: {e.StatusCode}");
+            Console.WriteLine(e);
         }
 
         return Result.Error();

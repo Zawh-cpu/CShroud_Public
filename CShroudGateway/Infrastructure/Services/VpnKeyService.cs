@@ -43,7 +43,7 @@ public class VpnKeyService : IVpnKeyService
         
         if (!_protocolMappers.TryGetValue(key.Protocol, out var mapper))
             return Result.Unavailable();
-
+        
         var result = await _vpnRepository.AddKey(key.Server, key.Id, key.Protocol, vpnLevel, mapper(key.Id));
         if (!result.IsSuccess) return result.Map();
         await _baseRepository.AddWithSaveAsync(key);
@@ -53,11 +53,11 @@ public class VpnKeyService : IVpnKeyService
     public async Task<Result> AddKeyAsync(Key key, User user)
     {
         if (user.Rate is null) throw new ArgumentNullException(nameof(user.Rate));
-
+        
         // var activeKeys = await _baseRepository.CountKeysAsync(user.Id, x => x.Status == KeyStatus.Enabled);
         var activeKeys = await _baseRepository.CountKeysAsync(user.Id);
         if (activeKeys >= user.Rate.MaxKeys) return Result.Forbidden();
-
+        
         return (await ForceAddKeyAsync(key, user.Rate.VpnLevel)).Map();
     }
 

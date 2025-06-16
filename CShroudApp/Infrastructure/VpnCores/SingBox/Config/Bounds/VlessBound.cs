@@ -2,8 +2,6 @@
 
 public class VlessBound : BoundObject
 {
-    public new string Type { get; set; }= "vless";
-
     public required string Server { get; set; }
     public required uint ServerPort { get; set; }
     public required string Uuid { get; set; }
@@ -16,7 +14,7 @@ public class VlessBound : BoundObject
     {
         public bool Enabled { get; set; } = true;
         public required string ServerName { get; set; }
-        public bool Insecure { get; set; } = false;
+        public bool Insecure { get; set; }
         public UtlsObject? Utls { get; set; }
         public RealityObject? Reality { get; set; }
         

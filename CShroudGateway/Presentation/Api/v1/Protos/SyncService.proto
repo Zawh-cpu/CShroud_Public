@@ -4,8 +4,6 @@ option csharp_namespace = "CShroudGateway";
 
 package syncservice;
 
-import "google/protobuf/empty.proto";
-
 service SyncService {
   rpc SyncKeys (SyncKeyRequest) returns (SyncKeyResponse);
 }

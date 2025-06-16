@@ -32,6 +32,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Update="Certs\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
+    <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
@@ -124,6 +130,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Certs\" />
       <Folder Include="Infrastructure\Data\Migrations\" />
       <Folder Include="Presentation\Api\v1\Entities\" />
     </ItemGroup>

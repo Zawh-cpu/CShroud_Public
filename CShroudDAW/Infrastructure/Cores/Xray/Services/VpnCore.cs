@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using CShroudDAW.Application.Factories;
+using CShroudDAW.Core.Configs;
 using CShroudDAW.Core.Entities;
 using CShroudDAW.Core.Interfaces;
-using CShroudDAW.Infrastructure.Data.Config;
 using CShroudDAW.Infrastructure.Services;
 using Microsoft.Extensions.Options;
 
@@ -21,7 +21,7 @@ public class VpnCore : IVpnCore
 
     private readonly BaseProcess _process;
     
-    public VpnCore(IProcessFactory processFactory, IOptions<ApplicationConfig> options)
+    public VpnCore(IProcessFactory processFactory, ApplicationConfig options)
     {
         string runtimeName;
         switch (PlatformService.GetPlatform())
@@ -39,7 +39,7 @@ public class VpnCore : IVpnCore
         var processStartInfo = new ProcessStartInfo
         {
             FileName = Path.Combine(Environment.CurrentDirectory, "Binaries", "Cores", "Xray", PlatformService.GetFullname(), runtimeName),
-            Arguments = options.Value.Vpn.Cores.Xray.Args,
+            Arguments = options.Vpn.Cores.Xray.Args,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -47,7 +47,7 @@ public class VpnCore : IVpnCore
             CreateNoWindow = false
         };
         
-        _process = processFactory.Create(processStartInfo, options.Value.DebugMode);
+        _process = processFactory.Create(processStartInfo, options.DebugMode);
         _process.ProcessExited += OnProcessExited;
         _process.ProcessStarted += OnProcessStarted;
     }

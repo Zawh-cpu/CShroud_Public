@@ -6,6 +6,13 @@ namespace CShroudGateway.Infrastructure.Services;
 
 public class GrpcPool : IGrpcPool
 {
+    /*private HttpClientHandler httpHandler = new HttpClientHandler
+    {
+        // DANGEROUSLY! DEV ONLY
+        ServerCertificateCustomValidationCallback = 
+            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };*/
+    
     private readonly ConcurrentDictionary<string, GrpcChannel> _pool = new();
     private readonly SocketsHttpHandler _grpcHandler = new SocketsHttpHandler
     {

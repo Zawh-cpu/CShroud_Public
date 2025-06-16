@@ -168,20 +168,18 @@ public class SingBoxCore : IVpnCore
 
         _config.Outbounds = new();
         
-        _config.Outbounds = [mapped,
-            new BoundObject()
+        _config.Outbounds = [
+            mapped,
+            new DirectBound()
             {
-                Type = "direct",
                 Tag = "direct"
             },
-            new BoundObject()
+            new BlockBound()
             {
-                Type = "block",
                 Tag = "block"
             },
-            new BoundObject()
+            new DnsBound()
             {
-                Type = "dns",
                 Tag = "dns_out"
             }
         ];

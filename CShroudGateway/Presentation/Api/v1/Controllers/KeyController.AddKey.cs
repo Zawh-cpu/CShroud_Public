@@ -21,7 +21,10 @@ public partial class KeyController
         var user = await _userService.GetUserFromContext(User, x => x.Include(u => u.Rate));
         if (user is null) return OftenErrors.InvalidUser;
         
-        var server = await _vpnServerManager.GetAvailableServerAsync("frankfurt", request.Protocol);
+        Console.WriteLine(request.Location);
+        Console.WriteLine(request.Protocol.ToString());
+        
+        var server = await _vpnServerManager.GetAvailableServerAsync(request.Location, request.Protocol);
         if (server is null) return OftenErrors.ServerNotFound;
 
         var key = new Key()

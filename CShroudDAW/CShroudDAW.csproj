@@ -6,9 +6,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         
-        <IsAotCompatible>true</IsAotCompatible>
-        <!--<PublishAot>true</PublishAot>-->
-        <TrimMode>link</TrimMode>
+        <!--<IsAotCompatible>true</IsAotCompatible>
+        <PublishAot>true</PublishAot>
+        <TrimMode>link</TrimMode>-->
     </PropertyGroup>
 
     <ItemGroup>
@@ -53,6 +53,14 @@
       <Compile Update="Presentation\Services\KeyService.DelKey.cs">
         <DependentUpon>KeyService.cs</DependentUpon>
       </Compile>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+      <_ContentIncludedByDefault Remove="publish\Binaries\Cores\Xray\config.json" />
+      <_ContentIncludedByDefault Remove="publish\CShroudDAW.staticwebassets.endpoints.json" />
     </ItemGroup>
 
 </Project>

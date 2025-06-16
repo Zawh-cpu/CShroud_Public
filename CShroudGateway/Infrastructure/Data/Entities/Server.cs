@@ -15,6 +15,8 @@ public class Server
     
     [StringLength(49)]
     public required string IpV6Address { get; set; }
+    
+    public required uint DawPort { get; set; }
 
     public List<VpnProtocol> SupportedProtocols { get; set; } = new();
     public string SecretKey { get; set; } = Generator.GenerateRandomString(64);

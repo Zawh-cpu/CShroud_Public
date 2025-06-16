@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using CShroudDAW.Core.Configs;
 using CShroudDAW.Core.Interfaces;
-using CShroudDAW.Infrastructure.Data.Config;
 
 namespace CShroudDAW.Infrastructure.Services;
 

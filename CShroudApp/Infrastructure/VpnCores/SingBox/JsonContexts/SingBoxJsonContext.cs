@@ -7,5 +7,4 @@ namespace CShroudApp.Infrastructure.VpnCores.SingBox.JsonContexts;
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower, WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault)]
 [JsonSerializable(typeof(TopConfig))]
-[JsonSerializable(typeof(VlessCredentials))]
 public partial class SingBoxJsonContext : JsonSerializerContext;

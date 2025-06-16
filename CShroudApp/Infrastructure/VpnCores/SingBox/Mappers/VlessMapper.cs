@@ -20,7 +20,7 @@ public static class VlessMapper
     public static VlessBound? Map(JsonObject credentials)
     {
         // var creds = (VlessCredentials)credentials;
-        var creds = credentials.Deserialize<VlessCredentials>(SingBoxJsonContext.Default.VlessCredentials);
+        var creds = credentials.Deserialize<VlessCredentials>(CredentialsJsonContext.Default.VlessCredentials);
         if (creds == null) return null;
 
         return new VlessBound()

@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using CShroudDAW.Infrastructure.Data.Config;
+using CShroudDAW.Core.Configs;
 using CShroudDAW.Infrastructure.Services;
 
 namespace CShroudDAW.Application.Factories;

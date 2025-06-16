@@ -1,12 +1,11 @@
 using Ardalis.Result;
+using CShroudDAW.Core.Configs;
 using CShroudDAW.Core.Entities;
 using CShroudDAW.Core.Interfaces;
 using CShroudDAW.Infrastructure.Cores.Xray.Mappers;
-using CShroudDAW.Infrastructure.Data.Config;
 using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
-using Microsoft.Extensions.Options;
 using Xray.App.Proxyman.Command;
 using Xray.Common.Protocol;
 using Xray.Common.Serial;
@@ -21,9 +20,9 @@ public class VpnRepository : IVpnRepository
     };
     private readonly GrpcChannel _channel;
     
-    public VpnRepository(IOptions<ApplicationConfig> config)
+    public VpnRepository(ApplicationConfig config)
     {
-        _channel = GrpcChannel.ForAddress(config.Value.Vpn.Cores.Xray.ApiAddress);
+        _channel = GrpcChannel.ForAddress(config.Vpn.Cores.Xray.ApiAddress);
     }
     
     public static TypedMessage ToTypedMessage(IMessage message)
