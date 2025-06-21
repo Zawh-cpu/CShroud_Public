@@ -1,0 +1,18 @@
+﻿using Avalonia;
+
+namespace CShroudApp.Presentation.Ui;
+
+public sealed class UiStarter
+{
+    public static void Start(IServiceProvider serviceProvider, string[] args)
+    {
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
+    }
+
+    public static AppBuilder BuildAvaloniaApp()
+        => AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .WithInterFont()
+            .LogToTrace();
+}

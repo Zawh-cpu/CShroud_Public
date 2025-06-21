@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using CShroudApp.Core.Configs;
 using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
 
@@ -12,12 +13,18 @@ public class VpnService : IVpnService
     public event EventHandler? VpnDisabled;
     
     private readonly IVpnCore _vpnCore;
+    private readonly IProxyManager _proxyManager;
+    private readonly ApplicationConfig _applicationConfig;
     
     public VpnProtocol[] SupportedProtocols => _vpnCore.SupportedProtocols;
 
-    public VpnService(IVpnCore vpnCore)
+    private VpnConfig? _savedCurrentSessionConfig;
+
+    public VpnService(IVpnCore vpnCore, IProxyManager proxyManager, ApplicationConfig applicationConfig)
     {
         _vpnCore = vpnCore;
+        _proxyManager = proxyManager;
+        _applicationConfig = applicationConfig;
 
         _vpnCore.CoreEnabled += OnCoreEnabled;
         _vpnCore.CoreDisabled += OnCoreDisabled;
@@ -25,24 +32,86 @@ public class VpnService : IVpnService
     
     public async Task<Result> EnableAsync(VpnMode mode, VpnConnectionCredentials credentials)
     {
+        _savedCurrentSessionConfig = _applicationConfig.Vpn;
+        _savedCurrentSessionConfig.Mode = mode;
+
+        if (mode == VpnMode.Tun && _vpnCore.DoNeedElevationForTun)
+        {
+            Console.WriteLine("NEEDS TO REQUEST A RIGHTS ELEVATION TO ENABLE TUN.");
+            return Result.Unauthorized();
+        }
+        
         if (IsRunning) return Result.Conflict();
         if (!SupportedProtocols.Contains(credentials.Protocol)) return Result.Invalid();
         
         return (await _vpnCore.EnableAsync(mode, credentials)).Map();
     }
 
-    public Task DisableAsync()
+    public async Task DisableAsync()
     {
-        throw new NotImplementedException();
+        if (_savedCurrentSessionConfig is not null)
+        {
+            switch (_savedCurrentSessionConfig.Mode)
+            {
+                case VpnMode.Proxy:
+                    if (_savedCurrentSessionConfig.SavePreviousProxy && _proxyManager.CachedProxy is not null)
+                        _proxyManager.SetupProxy(_proxyManager.CachedProxy);
+                    else
+                        _proxyManager.DisableProxy();
+                    break;
+            
+                case VpnMode.Tun or VpnMode.TunPlusProxy:
+                    Console.WriteLine("FWEFWEFFWEF ");
+                    if (!_vpnCore.AutoSetInboundSupportedProtocol.Contains(VpnProtocol.Tun))
+                        Console.WriteLine("Needs to disable Tun");
+                    break;
+            }
+        }
+        
+        _savedCurrentSessionConfig = null;
+        
+        await _vpnCore.DisableAsync();
     }
 
-    public Task RestartAsync(VpnMode mode, VpnConnectionCredentials credentials)
+    public async Task RestartAsync(VpnMode mode, VpnConnectionCredentials credentials)
     {
-        throw new NotImplementedException();
+        await DisableAsync();
+        await EnableAsync(mode, credentials);
     }
 
     private void OnCoreEnabled(object? sender, EventArgs e)
     {
+        if (_savedCurrentSessionConfig is not null)
+        {
+            switch (_savedCurrentSessionConfig.Mode)
+            {
+                case VpnMode.Proxy:
+                    if (_savedCurrentSessionConfig.SavePreviousProxy)
+                        _proxyManager.CachedProxy = _proxyManager.GetProxyData();
+                    
+                    if (_savedCurrentSessionConfig.Inputs.PreferredInput == ProxyProtocol.Socks)
+                        _proxyManager.SetupProxy(
+                            new ProxyData(ProxyProtocol.Socks,
+                                _savedCurrentSessionConfig.Inputs.Socks.Host,
+                                _savedCurrentSessionConfig.Inputs.Socks.Port,
+                                _savedCurrentSessionConfig.Inputs.ExcludeProxyForAddresses, true));
+                    else
+                        _proxyManager.SetupProxy(
+                            new ProxyData(ProxyProtocol.Http,
+                                _savedCurrentSessionConfig.Inputs.Http.Host,
+                                _savedCurrentSessionConfig.Inputs.Http.Port,
+                                _savedCurrentSessionConfig.Inputs.ExcludeProxyForAddresses, true));
+                    break;
+                
+                case VpnMode.Tun or VpnMode.TunPlusProxy:
+                    Console.WriteLine("FWEFWEFFWEF ");
+                    if (!_vpnCore.AutoSetInboundSupportedProtocol.Contains(VpnProtocol.Tun))
+                        Console.WriteLine("Needs to enable Tun");
+                    break;
+            }
+            
+            _savedCurrentSessionConfig = null;
+        }
         VpnEnabled?.Invoke(this, e);
     }
     

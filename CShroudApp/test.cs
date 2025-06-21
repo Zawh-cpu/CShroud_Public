@@ -43,6 +43,10 @@ public class test
             var res = await vpnService.EnableAsync(VpnMode.Proxy, credentials);
 
             Console.WriteLine($"RESULT OF RUN-VPN ATTEMPT = {res.Status}");
+            await Task.Delay(5000);
+
+            await vpnService.DisableAsync();
+            Console.WriteLine($"RESULT OF DISABLR-VPN ATTEMPT = {res.Status}");
         }
         catch (Exception ex)
         {

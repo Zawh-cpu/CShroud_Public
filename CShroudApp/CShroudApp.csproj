@@ -9,10 +9,21 @@
         <PublishAot>true</PublishAot>
         <InvariantGlobalization>true</InvariantGlobalization>
         <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+        <!--<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>-->
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+        <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     </PropertyGroup>
     
     <ItemGroup>
       <PackageReference Include="Ardalis.Result" Version="10.1.0" />
+      <PackageReference Include="Avalonia" Version="11.3.1" />
+      <PackageReference Include="Avalonia.Desktop" Version="11.3.1" />
+      <PackageReference Include="Avalonia.Diagnostics" Version="11.3.1" />
+      <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.1" />
+      <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="MessagePack" Version="3.1.3" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6" />
@@ -28,9 +39,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Assets\" />
       <Folder Include="Binaries\Cores\SingBox\WindowsX64\" />
       <Folder Include="Internal\GeoRules\SRSS\" />
-      <Folder Include="Presentation\" />
+      <Folder Include="Presentation\Ui\Models\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
     
     <ItemGroup>
@@ -40,11 +56,25 @@
         <None Update="Internal\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Compile Remove="Presentation\Ui\UiStarter.cs" />
+        <None Include="Presentation\Ui\UiStarter.cs.deprecated" />
+        <Compile Update="Presentation\Ui\Views\TestView.axaml.cs">
+          <DependentUpon>Test.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Presentation\Ui\Views\Auth\LoginView.axaml.cs">
+          <DependentUpon>Test.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
       <Compile Remove="Infrastructure\VpnCores\SingBox\SingBoxLayer.cs" />
       <None Include="Infrastructure\VpnCores\SingBox\SingBoxLayer.cs" />
+      <Compile Update="Presentation\Ui\App.axaml.cs">
+        <DependentUpon>App.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 </Project>

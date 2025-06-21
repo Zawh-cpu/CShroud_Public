@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CShroudApp.Presentation.Ui.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
+        x:Class="CShroudApp.Presentation.Ui.Views.MainView"
+        x:DataType="vm:MainViewModel"
+        x:CompileBindings="True"
+        Width="485" Height="715"
+        Icon="/Assets/logo.ico"
+        Title="CrimsonShroud">
+
+    <Design.DataContext>
+        <vm:MainViewModel/>
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="*,Auto">
+        <TransitioningContentControl Content="{ Binding CurrentView }" />
+    </Grid> 
+</Window>

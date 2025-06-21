@@ -4,6 +4,6 @@ public class SocksBound : BoundObject
 {
     public required string Listen { get; set; }
     public required uint ListenPort { get; set; }
-    public bool Sniff { get; set; } = false;
-    public bool SniffOverrideDestination { get; set; } = false;
+    public bool? Sniff { get; set; }
+    public bool? SniffOverrideDestination { get; set; }
 }

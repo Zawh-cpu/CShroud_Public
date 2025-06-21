@@ -17,15 +17,19 @@ public class RouteObject
 
     public class RouteRule
     {
-        public required string Outbound { get; set; }
-        public string[]? Protocol { get; set; }
+        public string? Outbound { get; set; }
+        public string? Protocol { get; set; }
         public string[]? Domain { get; set; }
         public string[]? DomainSuffix { get; set; }
         public string[]? Network { get; set; }
         public string[]? RuleSet { get; set; }
         public string[]? IpCidr { get; set; }
+        public string[]? ProcessName { get; set; }
+        public string[]? ProcessPath { get; set; }
+        
         public uint[]? Port { get; set; }
         public bool? IpIsPrivate { get; set; }
+        public string? Action { get; set; }
     }
     
     public class RouteRuleSet

@@ -10,7 +10,9 @@ public interface IVpnCore
     
     bool IsRunning { get; }
     VpnProtocol[] SupportedProtocols { get; }
-    
+    VpnProtocol[] AutoSetInboundSupportedProtocol { get; }
+    bool DoNeedElevationForTun { get; }
     
     Task<Result> EnableAsync(VpnMode mode, VpnConnectionCredentials credentials);
+    Task DisableAsync();
 }

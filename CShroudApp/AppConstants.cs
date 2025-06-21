@@ -13,6 +13,7 @@ public static class AppConstants
     public static readonly string InternalDataDirectory = Path.Combine(ApplicationDirectory, "Internal");
     public static readonly string InternalDirectIPsPath = Path.Combine(InternalDataDirectory, "InternalDirectIPs.txt");
     public static readonly string InternalDirectDomainsPath = Path.Combine(InternalDataDirectory, "InternalDirectDomains.txt");
+    public static readonly string InternalDirectProcessesPath = Path.Combine(InternalDataDirectory, "InternalDirectProcesses.txt");
     public static readonly string InternalGeoRulesPath = Path.Combine(InternalDataDirectory, "GeoRules", "SRSS");
     
     public static readonly string BinariesDirectory = Path.Combine(ApplicationDirectory, "Binaries");

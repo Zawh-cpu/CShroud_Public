@@ -10,9 +10,10 @@ namespace CShroudApp.Infrastructure.VpnCores.SingBox.Config.Bounds;
 [JsonDerivedType(typeof(BlockBound), "block")]
 [JsonDerivedType(typeof(DirectBound), "direct")]
 [JsonDerivedType(typeof(DnsBound), "dns")]
+[JsonDerivedType(typeof(TunBound), "tun")]
 public class BoundObject
 {
-    public string Tag { get; set; }
+    public string? Tag { get; set; }
 
-    [JsonExtensionData] public Dictionary<string , object> ExternalData { get; set; }
+    [JsonExtensionData] public Dictionary<string , object>? ExternalData { get; set; }
 }

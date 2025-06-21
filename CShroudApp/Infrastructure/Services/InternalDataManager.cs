@@ -6,6 +6,7 @@ public class InternalDataManager : IInternalDataManager
 {
     public List<string> InternalDirectIPs { get; set; } = new();
     public List<string> InternalDirectDomains { get; set; } = new();
+    public string[] InternalDirectProcesses { get; set; } = [];
 
     public InternalDataManager()
     {
@@ -14,5 +15,8 @@ public class InternalDataManager : IInternalDataManager
         
         if (File.Exists(AppConstants.InternalDirectDomainsPath))
             InternalDirectDomains.AddRange(File.ReadAllLines(AppConstants.InternalDirectDomainsPath));
+        
+        if (File.Exists(AppConstants.InternalDirectProcessesPath))
+            InternalDirectDomains.AddRange(File.ReadAllLines(AppConstants.InternalDirectProcessesPath));
     }
 }

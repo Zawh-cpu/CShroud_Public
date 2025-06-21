@@ -2,6 +2,16 @@
 
 namespace CShroudApp.Core.Utils;
 
+public enum Platform
+{
+    Windows,
+    Linux,
+    MacOS,
+    Android,
+    iOS,
+    Unknown
+}
+
 public static class PlatformInformation
 {
     public static string GetPlatform()
@@ -12,6 +22,16 @@ public static class PlatformInformation
         if (OperatingSystem.IsAndroid()) return "Android";
         if (OperatingSystem.IsIOS()) return "iOS";
         return String.Empty;
+    }
+    
+    public static Platform GetPlatformRaw()
+    {
+        if (OperatingSystem.IsWindows()) return Platform.Windows;
+        if (OperatingSystem.IsLinux()) return Platform.Linux;
+        if (OperatingSystem.IsMacOS()) return Platform.MacOS;
+        if (OperatingSystem.IsAndroid()) return Platform.Android;
+        if (OperatingSystem.IsIOS()) return Platform.iOS;
+        return Platform.Unknown;
     }
 
     public static string GetArchitecture()

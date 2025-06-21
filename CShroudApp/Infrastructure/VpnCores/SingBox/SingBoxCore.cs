@@ -24,7 +24,9 @@ public class SingBoxCore : IVpnCore
     private static readonly string PathToCoreDirectory = Path.Combine(AppConstants.BinariesDirectory, "Cores", "SingBox");
     
     public VpnProtocol[] SupportedProtocols { get; } = [VpnProtocol.Http, VpnProtocol.Socks, VpnProtocol.Tun, VpnProtocol.Vless];
-
+    public VpnProtocol[] AutoSetInboundSupportedProtocol { get; } = [VpnProtocol.Tun];
+    public bool DoNeedElevationForTun { get; } = true;
+    
     private readonly Dictionary<VpnProtocol, Func<JsonObject, BoundObject?>> _boundMappers = new()
     {
         [VpnProtocol.Vless] = VlessMapper.Map
@@ -134,28 +136,46 @@ public class SingBoxCore : IVpnCore
         _config.Dns.Final = "remote";
     }
 
-    private void SetupInbounds()
+    private void SetupInbounds(VpnMode mode)
     {
         _config.Inbounds = new();
         
-        _config.Inbounds = [
-            new SocksBound
-            {
-                Tag = "socks",
-                Listen = _settings.Vpn.Inputs.Socks.Host,
-                ListenPort = _settings.Vpn.Inputs.Socks.Port,
-                Sniff = true,
-                SniffOverrideDestination = true
-            },
-            
-            new HttpBound()
-            {
-                Tag = "http",
-                Listen = _settings.Vpn.Inputs.Http.Host,
-                ListenPort = _settings.Vpn.Inputs.Http.Port,
-                Sniff = true,
-                SniffOverrideDestination = true
-            }];
+        if (mode is VpnMode.Proxy or VpnMode.TunPlusProxy or VpnMode.TransparentProxy)
+            _config.Inbounds.AddRange(
+                new SocksBound
+                {
+                    Tag = "socks",
+                    Listen = _settings.Vpn.Inputs.Socks.Host,
+                    ListenPort = _settings.Vpn.Inputs.Socks.Port,
+                    Sniff = true,
+                    SniffOverrideDestination = true
+                },
+                
+                new HttpBound()
+                {
+                    Tag = "http",
+                    Listen = _settings.Vpn.Inputs.Http.Host,
+                    ListenPort = _settings.Vpn.Inputs.Http.Port,
+                    Sniff = true,
+                    SniffOverrideDestination = true
+                });
+        
+        if (mode is VpnMode.Tun)
+        {
+            _config.Inbounds.Add(
+                new TunBound()
+                {
+                    Tag = "tun-in",
+                    InterfaceName = "CrimsonShroud",
+                    Address = [ "172.18.0.1/30" ],
+                    Mtu = 9000,
+                    AutoRoute = true,
+                    StrictRoute = true,
+                    Stack = "gvisor",
+                    Sniff = true
+                }
+                );
+        }
     }
 
     private void SetupOutbounds(VpnConnectionCredentials credentials)
@@ -166,6 +186,8 @@ public class SingBoxCore : IVpnCore
         var mapped = mapper(credentials.Credentials);
         if (mapped == null) throw new NotSupportedException();
 
+        mapped.Tag = "proxy";
+        
         _config.Outbounds = new();
         
         _config.Outbounds = [
@@ -173,27 +195,26 @@ public class SingBoxCore : IVpnCore
             new DirectBound()
             {
                 Tag = "direct"
-            },
-            new BlockBound()
-            {
-                Tag = "block"
-            },
-            new DnsBound()
-            {
-                Tag = "dns_out"
             }
         ];
     }
 
-    private void SetupRoutes()
+    private void SetupRoutes(VpnMode mode)
     {
         _config.Route = new RouteObject();
         
+        if (mode is VpnMode.Tun)
+            _config.Route.AutoDetectInterface = true;
+        
         _config.Route.Rules = [
+            //new RouteObject.RouteRule()
+            //{
+            //    Action = "sniff"
+            //},
             new RouteObject.RouteRule()
             {
-                Outbound = "dns_out",
-                Protocol = [ "dns" ]
+                Action = "hijack-dns",
+                Protocol = "dns"
             },
             new RouteObject.RouteRule()
             {
@@ -203,7 +224,7 @@ public class SingBoxCore : IVpnCore
             },
             new RouteObject.RouteRule()
             {
-                Outbound = "block",
+                Action = "reject",
                 Network = [ "udp" ],
                 Port = [ 443 ]
             },
@@ -234,6 +255,141 @@ public class SingBoxCore : IVpnCore
                 RuleSet = [ "geosite-cn" ]
             }
             ];
+
+        if (_settings.Vpn.SplitTunneling.Enabled)
+        {
+            if (_settings.Vpn.SplitTunneling.BypassIps.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "direct",
+                        IpCidr = _settings.Vpn.SplitTunneling.BypassIps
+                    }
+                );
+
+            if (_settings.Vpn.SplitTunneling.BypassHosts.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "direct",
+                        Domain = _settings.Vpn.SplitTunneling.BypassHosts
+                    }
+                );
+
+            if (_settings.Vpn.SplitTunneling.BypassPorts.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "direct",
+                        Port = _settings.Vpn.SplitTunneling.BypassPorts
+                    }
+                );
+            
+            if (_settings.Vpn.SplitTunneling.BypassProcesses.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "direct",
+                        ProcessName = _settings.Vpn.SplitTunneling.BypassProcesses
+                    }
+                );
+            
+            if (_settings.Vpn.SplitTunneling.BypassApps.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "direct",
+                        ProcessPath = _settings.Vpn.SplitTunneling.BypassApps
+                    }
+                );
+        }
+        
+        _config.Route.RuleSet = [
+            new RouteObject.RouteRuleSet()
+            {
+                Tag = "geosite-private",
+                Type = "local",
+                Format = "binary",
+                Path = Path.Combine(AppConstants.InternalGeoRulesPath, "geosite-private.srs")
+            },
+            new RouteObject.RouteRuleSet()
+            {
+                Tag = "geosite-cn",
+                Type = "local",
+                Format = "binary",
+                Path = Path.Combine(AppConstants.InternalGeoRulesPath, "geosite-cn.srs")
+            },
+            new RouteObject.RouteRuleSet()
+            {
+                Tag = "geoip-cn",
+                Type = "local",
+                Format = "binary",
+                Path = Path.Combine(AppConstants.InternalGeoRulesPath, "geoip-cn.srs")
+            }];
+    }
+    private void SetupRoutesReversed(VpnMode mode)
+    {
+        _config.Route = new RouteObject();
+
+        if (mode is VpnMode.Tun)
+            _config.Route.AutoDetectInterface = true;
+        
+        _config.Route.Rules =
+        [
+            new RouteObject.RouteRule()
+            {
+                Action = "hijack-dns",
+                Protocol = "dns"
+            }
+        ];
+
+        if (_settings.Vpn.SplitTunneling.Enabled)
+        {
+            if (_settings.Vpn.SplitTunneling.BypassIps.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "proxy",
+                        IpCidr = _settings.Vpn.SplitTunneling.BypassIps
+                    }
+                );
+
+            if (_settings.Vpn.SplitTunneling.BypassHosts.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "proxy",
+                        Domain = _settings.Vpn.SplitTunneling.BypassHosts
+                    }
+                );
+
+            if (_settings.Vpn.SplitTunneling.BypassPorts.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "proxy",
+                        Port = _settings.Vpn.SplitTunneling.BypassPorts
+                    }
+                );
+            
+            if (_settings.Vpn.SplitTunneling.BypassProcesses.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "proxy",
+                        ProcessName = _settings.Vpn.SplitTunneling.BypassProcesses
+                    }
+                );
+            
+            if (_settings.Vpn.SplitTunneling.BypassApps.Any())
+                _config.Route.Rules.Add(
+                    new RouteObject.RouteRule()
+                    {
+                        Outbound = "proxy",
+                        ProcessPath = _settings.Vpn.SplitTunneling.BypassApps
+                    }
+                );
+        }
         
         _config.Route.RuleSet = [
             new RouteObject.RouteRuleSet()
@@ -259,6 +415,22 @@ public class SingBoxCore : IVpnCore
             }];
     }
 
+    private void SetupRoutesProcessFix()
+    {
+        _config.Route!.Rules.AddRange(
+            new RouteObject.RouteRule()
+        {
+            Action = "hijack-dns",
+            Port = [53],
+            ProcessName = _internalDataManager.InternalDirectProcesses
+        },
+            new RouteObject.RouteRule()
+        {
+            Outbound = "direct",
+            ProcessName = _internalDataManager.InternalDirectProcesses
+        });
+    }
+
     private void SetupExperimental()
     {
         _config.Experimental = new();
@@ -275,9 +447,17 @@ public class SingBoxCore : IVpnCore
         _config = new TopConfig();
         SetupLogs();
         SetupDns(credentials.TransparentHosts);
-        SetupInbounds();
+        SetupInbounds(mode);
         SetupOutbounds(credentials);
-        SetupRoutes();
+        
+        if (_settings.Vpn.ReverseMode)
+            SetupRoutesReversed(mode);
+        else
+            SetupRoutes(mode);
+
+        if (mode is VpnMode.Tun or VpnMode.TunPlusProxy)
+            SetupRoutesProcessFix();
+        
         SetupExperimental();
 
         _process.Start(reactivateProcess: true);
@@ -294,6 +474,11 @@ public class SingBoxCore : IVpnCore
         _process.StandardInput.Close();
         
         return Result.Success();
+    }
+
+    public async Task DisableAsync()
+    {
+        await _process.KillAsync();
     }
 
     private void OnProcessStarted(object? sender, EventArgs e)
