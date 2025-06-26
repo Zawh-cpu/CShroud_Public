@@ -5,17 +5,163 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
         x:Class="CShroudApp.Presentation.Ui.Views.MainView"
+        xmlns:selectors="clr-namespace:CShroudApp.Presentation.Ui.Selectors"
         x:DataType="vm:MainViewModel"
         x:CompileBindings="True"
         Width="485" Height="715"
         Icon="/Assets/logo.ico"
-        Title="CrimsonShroud">
+        Title="CrimsonShroud"
+        Background="#161616">
 
     <Design.DataContext>
-        <vm:MainViewModel/>
+        <vm:DesignerViewModel/>
     </Design.DataContext>
     
-    <Grid RowDefinitions="*,Auto">
-        <TransitioningContentControl Content="{ Binding CurrentView }" />
+    <Window.Resources>
+        <selectors:NotificationTemplateSelector x:Key="NotificationSelector"
+                                            InfoTemplate="{DynamicResource InfoTemplate}"
+                                            SuccessTemplate="{DynamicResource SuccessTemplate}"
+                                            WarningTemplate="{DynamicResource WarningTemplate}"
+                                            ErrorTemplate="{DynamicResource ErrorTemplate}"/>
+    </Window.Resources>
+    
+    <Window.Styles>
+        <Style Selector="Border.Notification">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+            
+            <Style Selector="^ TextBlock.Title">
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+            
+            <Style Selector="^ TextBlock.Text">
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+            
+            <Style Selector="^ ProgressBar.ProgressBar">
+                <Setter Property="Height" Value="2"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="100"/>
+                <Setter Property="Margin" Value="-16"/>
+                <Setter Property="FlowDirection" Value="RightToLeft"/>
+                <Setter Property="CornerRadius" Value="2"/>
+                
+            </Style>
+            
+            <Style Selector="^ ProgressBar.Animating">
+                <Style.Animations>
+                    <Animation Duration="0:32:0" FillMode="Forward">
+                        <KeyFrame Cue="0">
+                            <Setter Property="Value" Value="100"></Setter>
+                        </KeyFrame>
+                        <KeyFrame Cue="1">
+                            <Setter Property="Value" Value="0"></Setter>
+                        </KeyFrame>
+                    </Animation>
+                </Style.Animations>
+            </Style>
+        </Style>
+        
+        <Style Selector="Border.Notification-Info">
+            <Setter Property="Background" Value="#032830"/>
+            <Setter Property="BorderBrush" Value="#087990"/>
+            
+            <Style Selector="^ TextBlock.Title">
+                <Setter Property="Foreground" Value="#6edff6"/>
+            </Style>
+            
+            <Style Selector="^ TextBlock.Text">
+                <Setter Property="Foreground" Value="#6edff6"/>
+            </Style>
+            
+            <Style Selector="^ ProgressBar.ProgressBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="#087990"/>
+            </Style>
+        </Style>
+        
+        <Style Selector="Border.Notification-Success">
+            <Setter Property="Background" Value="#051b11"/>
+            <Setter Property="BorderBrush" Value="#0f5132"/>
+            
+            <Style Selector="^ TextBlock.Title">
+                <Setter Property="Foreground" Value="#75b798"/>
+            </Style>
+            
+            <Style Selector="^ TextBlock.Text">
+                <Setter Property="Foreground" Value="#75b798"/>
+            </Style>
+            
+            <Style Selector="^ ProgressBar.ProgressBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="#0f5132"/>
+            </Style>
+        </Style>
+        
+        <Style Selector="Border.Notification-Warning">
+            <Setter Property="Background" Value="#332701"/>
+            <Setter Property="BorderBrush" Value="#997404"/>
+            
+            <Style Selector="^ TextBlock.Title">
+                <Setter Property="Foreground" Value="#ffda6a"/>
+            </Style>
+            
+            <Style Selector="^ TextBlock.Text">
+                <Setter Property="Foreground" Value="#ffda6a"/>
+            </Style>
+            
+            <Style Selector="^ ProgressBar.ProgressBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="#997404"/>
+            </Style>
+        </Style>
+        
+        <Style Selector="Border.Notification-Error">
+            <Setter Property="Background" Value="#2c0b0e"/>
+            <Setter Property="BorderBrush" Value="#842029"/>
+            
+            <Style Selector="^ TextBlock.Title">
+                <Setter Property="Foreground" Value="#ea868f"/>
+            </Style>
+            
+            <Style Selector="^ TextBlock.Text">
+                <Setter Property="Foreground" Value="#ea868f"/>
+            </Style>
+            
+            <Style Selector="^ ProgressBar.ProgressBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="#842029"/>
+            </Style>
+        </Style>
+    </Window.Styles>
+    
+    <Grid RowDefinitions="Auto, *">
+        <StackPanel Background="#2C0B0E">
+            <Border BorderBrush="#842029" BorderThickness="0 0 0 0">
+                <Grid ColumnDefinitions="Auto, *, Auto" Margin="20 5" ColumnSpacing="20">
+                    <Svg Path="/Assets/icons/svg/turn-off.svg" Width="20" Height="20"></Svg>
+                    <TextBlock Grid.Column="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#CE757C" FontWeight="Normal">Failed connect to Ethernet.</TextBlock>
+                    <Button Grid.Column="2" Foreground="#CE757C" Background="Transparent">x</Button>
+                </Grid>
+            </Border>
+        </StackPanel>
+        
+        <TransitioningContentControl Grid.Row="1" Content="{ Binding CurrentView }" />
+        
+        <ItemsControl Grid.Row="1" x:Name="NotificationItemsControl" ItemsSource="{Binding Notifications}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" Spacing="5"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+                
+            <ItemsControl.ItemTemplate>
+                <StaticResource ResourceKey="NotificationSelector" />
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid> 
 </Window>

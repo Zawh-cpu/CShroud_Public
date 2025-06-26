@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate x:Key="InfoTemplate">
+        <Border Classes="Notification Notification-Info">
+            <StackPanel>
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="Title" Text="{ Binding Title }"/>
+                    <StackPanel>
+                        <TextBlock Classes="Text" Text="{ Binding Message }"/>
+                    </StackPanel>
+                </StackPanel>
+                <ProgressBar Classes="ProgressBar Animating"></ProgressBar>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SuccessTemplate">
+        <Border Classes="Notification Notification-Success">
+            <StackPanel>
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="Title" Text="{ Binding Title }"/>
+                    <StackPanel>
+                        <TextBlock Classes="Text" Text="{ Binding Message }"/>
+                    </StackPanel>
+                </StackPanel>
+                <ProgressBar Classes="ProgressBar Animating"></ProgressBar>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="WarningTemplate">
+        <Border Classes="Notification Notification-Warning">
+            <StackPanel>
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="Title" Text="{ Binding Title }"/>
+                    <StackPanel>
+                        <TextBlock Classes="Text" Text="{ Binding Message }"/>
+                    </StackPanel>
+                </StackPanel>
+                <ProgressBar Classes="ProgressBar Animating"></ProgressBar>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="ErrorTemplate">
+        <Border Classes="Notification Notification-Error">
+            <StackPanel>
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="Title" Text="{ Binding Title }"/>
+                    <StackPanel>
+                        <TextBlock Classes="Text" Text="{ Binding Message }"/>
+                    </StackPanel>
+                </StackPanel>
+                <ProgressBar Classes="ProgressBar Animating"></ProgressBar>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

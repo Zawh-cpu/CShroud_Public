@@ -10,9 +10,13 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
     
-    <Application.DataContext>
-        <viewModels:AppViewModel />
-    </Application.DataContext>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://CShroudApp/Presentation/Ui/Resources/Templates/NotificationTemplates.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>   
+    </Application.Resources>
   
     <Application.Styles>
         <FluentTheme />

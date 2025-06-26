@@ -1,12 +1,53 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CShroudApp.Core.Interfaces;
+using CShroudApp.Presentation.Ui.Interfaces;
 
 namespace CShroudApp.Presentation.Ui.ViewModels.Auth;
 
 public partial class LoginViewModel : ViewModelBase
 {
 
-    public LoginViewModel()
+    private bool _isPasswordVisible = false;
+    public char? PasswordChar => _isPasswordVisible ? null : '\u25cf';
+
+    // Иконка в зависимости от состояния
+    public string EyeIcon => _isPasswordVisible
+        ? "avares://CShroudApp/Assets/icons/svg/eye-open.svg"
+        : "avares://CShroudApp/Assets/icons/svg/eye-closed.svg";
+    
+    public ICommand TogglePasswordVisibilityCommand { get; }
+    public ICommand TryFastLogin { get; }
+    
+    private readonly IApiRepository _apiRepository;
+    private readonly INavigationService _navigationService;
+
+    public LoginViewModel(IApiRepository apiRepository, INavigationService navigationService)
     {
+        _apiRepository = apiRepository;
+        _navigationService = navigationService;
         
+        TogglePasswordVisibilityCommand = new RelayCommand(() => ToggleVisibility());
+        TryFastLogin = new RelayCommand(() => QuickLoginAttempt());
+    }
+
+    private void ToggleVisibility()
+    {
+        _isPasswordVisible = !_isPasswordVisible;
+        //OnPropertyChanged(nameof(PasswordChar));
+        //OnPropertyChanged(nameof(EyeIcon));
+    }
+
+    /*public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }*/
+
+    private void QuickLoginAttempt()
+    {
+        _navigationService.GoTo<QuickLoginViewModel>();
     }
 }

@@ -6,7 +6,7 @@
         <LangVersion>13</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PublishAot>true</PublishAot>
+        <!--<PublishAot>true</PublishAot>-->
         <InvariantGlobalization>true</InvariantGlobalization>
         <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
         <!--<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>-->
@@ -23,6 +23,8 @@
       <PackageReference Include="Avalonia.Desktop" Version="11.3.1" />
       <PackageReference Include="Avalonia.Diagnostics" Version="11.3.1" />
       <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.1" />
+      <PackageReference Include="Avalonia.Native" Version="11.3.1" />
+      <PackageReference Include="Avalonia.Svg" Version="11.3.0" />
       <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="MessagePack" Version="3.1.3" />
@@ -43,6 +45,12 @@
       <Folder Include="Binaries\Cores\SingBox\WindowsX64\" />
       <Folder Include="Internal\GeoRules\SRSS\" />
       <Folder Include="Presentation\Ui\Models\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Assets\**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -75,6 +83,11 @@
         <DependentUpon>App.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaXaml Remove="Presentation\Ui\Resources\Templates\NotificationTemplates.axaml" />
+      <AvaloniaResource Include="Presentation\Ui\Resources\Templates\NotificationTemplates.axaml" />
     </ItemGroup>
 
 </Project>

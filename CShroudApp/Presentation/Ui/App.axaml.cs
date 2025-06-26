@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CShroudApp.Presentation.Ui.Interfaces;
 using CShroudApp.Presentation.Ui.Services;
@@ -29,29 +30,55 @@ public partial class App : Avalonia.Application
         
         collection.AddSingleton<MainViewModel>();
         collection.AddSingleton<LoginViewModel>();
+        collection.AddSingleton<QuickLoginViewModel>();
         
         var host = BackendStarter.Start([], collection);
-
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        try
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
-            try
-            {
-                desktop.MainWindow = new MainView()
-                {
-                    DataContext = host.Services.GetRequiredService<MainViewModel>()
-                };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            
-        }
 
-        base.OnFrameworkInitializationCompleted();
+            var vm = host.Services.GetService<MainViewModel>();
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                if (Design.IsDesignMode)
+                {
+                    desktop.MainWindow = new MainView()
+                    {
+                        DataContext = vm
+                    };
+                }
+                else
+                {
+                    desktop.MainWindow = new MainView()
+                    {
+                        DataContext = vm
+                    };
+                }
+
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+            {
+                if (Design.IsDesignMode)
+                {
+                    singleViewPlatform.MainView = new MainView()
+                    {
+                        DataContext = new DesignerViewModel()
+                    };
+                }
+                else
+                {
+                    singleViewPlatform.MainView = new MainView()
+                    {
+                        DataContext = vm
+                    };
+                }
+            }
+
+            base.OnFrameworkInitializationCompleted();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
