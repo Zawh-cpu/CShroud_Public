@@ -34,12 +34,15 @@ public partial class LoginViewModel : ViewModelBase
         
         TogglePasswordVisibilityCommand = new RelayCommand(() => ToggleVisibility());
         TryFastLogin = new RelayCommand(() => QuickLoginAttempt());
-        TryLoginUsingCredentialsCommand = new RelayCommand(() => _notificationManager.AddNotification(new NotificationObject()
+        TryLoginUsingCredentialsCommand = new RelayCommand(() =>
         {
-            Title = "Incomplete functionality",
-            Message = "Sorry, but this functionality is disabled yet.",
-            Type = NotificationType.Error
-        }));
+            _notificationManager.AddNotification(new NotificationObject()
+            {
+                Title = "Incomplete functionality",
+                Message = "Sorry, but this functionality is disabled yet.",
+                Type = NotificationType.Error
+            });
+        });
     }
 
     private void ToggleVisibility()

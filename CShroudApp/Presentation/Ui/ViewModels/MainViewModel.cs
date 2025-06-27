@@ -11,6 +11,7 @@ using CShroudApp.Presentation.Ui.Interfaces;
 using CShroudApp.Presentation.Ui.ViewModels.Auth;
 
 using INotificationManager = CShroudApp.Core.Interfaces.INotificationManager;
+using NotificationType = CShroudApp.Core.Entities.NotificationType;
 
 namespace CShroudApp.Presentation.Ui.ViewModels;
 
@@ -23,8 +24,11 @@ public partial class MainViewModel : ViewModelBase
     
     private readonly INavigationService _navigationService;
 
-    private const int MaxDisplayedNotificationsCound = 5;
+    private const int MaxDisplayedNotificationsCount = 4;
+    private const int MaxDisplayedHeaderNotificationsCount = 2;
     public AvaloniaList<NotificationDisplayItem> Notifications { get; } = new();
+    
+    public AvaloniaList<HeaderNotificationDisplayItem> HeaderNotifications { get; } = new();
 
     public MainViewModel(INavigationService navigationService, INotificationManager notificationManager)
     {
@@ -32,7 +36,13 @@ public partial class MainViewModel : ViewModelBase
         
         navigationService.ViewModelChanged += ChangeWindow;
         notificationManager.NotificationReceived += AddNotification;
-        
+        notificationManager.HeaderNotificationReceived += AddHeaderNotification;
+        notificationManager.InternetConnectionRestored += () => Dispatcher.UIThread.Invoke(() =>
+        {
+            var notify = HeaderNotifications.FirstOrDefault(x => x.Reason == HeaderNotificationReason.InternetConnectionLost);
+            if (notify is not null)
+                Dispatcher.UIThread.Invoke(() => HeaderNotifications.Remove(notify));
+        });;
 
         ToLoginCommand = new RelayCommand(() =>
         {
@@ -61,7 +71,7 @@ public partial class MainViewModel : ViewModelBase
 
     public void AddNotification(NotificationObject notification)
     {
-        if (Notifications.Count >= MaxDisplayedNotificationsCound)
+        if (Notifications.Count >= MaxDisplayedNotificationsCount)
         {
             var temp = Notifications[0];
             Task.Run(async () =>
@@ -85,6 +95,29 @@ public partial class MainViewModel : ViewModelBase
         };
         Notifications.Add(notify);
         notify.StartCountdown(5000);
+    }
+
+    public void AddHeaderNotification(HeaderNotificationObject notification)
+    {
+        if (HeaderNotifications.Count >= MaxDisplayedHeaderNotificationsCount)
+        {
+            var temp = HeaderNotifications[0];
+            Dispatcher.UIThread.Invoke(() => HeaderNotifications.Remove(temp));
+        }
+        
+        var notify = new HeaderNotificationDisplayItem()
+        {
+            Message = notification.Message,
+            Type = notification.Type,
+            Reason = notification.Reason
+        };
+        
+        notify.ClosedCommandEmit += async () =>
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => HeaderNotifications.Remove(notify));
+        };
+        
+        HeaderNotifications.Add(notify);
     }
     
     public void ChangeWindow(object? sender, ViewModelBase view)

@@ -1,0 +1,50 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate x:Key="HeaderNotification-InfoTemplate">
+        <Border Classes="HeaderNotification HeaderNotification-Info">
+            <Grid Classes="Wrapper" ColumnDefinitions="Auto, *, Auto">
+                <Svg Path="{ Binding NotificationIcon, StringFormat='/Assets/icons/svg/{0}' }"/>
+                <TextBlock Grid.Column="1" Classes="Text" Text="{ Binding Message}"/>
+                <Button Grid.Column="2" Classes="CloseButton" Command="{ Binding CloseNotificationCommand }">
+                    <Svg/>
+                </Button>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HeaderNotification-SuccessTemplate">
+        <Border Classes="HeaderNotification HeaderNotification-Success">
+            <Grid Classes="Wrapper" ColumnDefinitions="Auto, *, Auto">
+                <Svg Path="{ Binding NotificationIcon, StringFormat='/Assets/icons/svg/{0}' }"/>
+                <TextBlock Grid.Column="1" Classes="Text" Text="{ Binding Message}"/>
+                <Button Grid.Column="2" Classes="CloseButton" Command="{ Binding CloseNotificationCommand }">
+                    <Svg/>
+                </Button>
+            </Grid>
+        </Border>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="HeaderNotification-WarningTemplate">
+        <Border Classes="HeaderNotification HeaderNotification-Warning">
+            <Grid Classes="Wrapper" ColumnDefinitions="Auto, *, Auto">
+                <Svg Path="{ Binding NotificationIcon, StringFormat='/Assets/icons/svg/{0}' }"/>
+                <TextBlock Grid.Column="1" Classes="Text" Text="{ Binding Message}"/>
+                <Button Grid.Column="2" Classes="CloseButton" Command="{ Binding CloseNotificationCommand }">
+                    <Svg/>
+                </Button>
+            </Grid>
+        </Border>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="HeaderNotification-ErrorTemplate">
+        <Border Classes="HeaderNotification HeaderNotification-Error">
+            <Grid Classes="Wrapper" ColumnDefinitions="Auto, *, Auto">
+                <Svg Path="{ Binding NotificationIcon, StringFormat='/Assets/icons/svg/{0}' }"/>
+                <TextBlock Grid.Column="1" Classes="Text" Text="{ Binding Message}"/>
+                <Button Grid.Column="2" Classes="CloseButton" Command="{ Binding CloseNotificationCommand }">
+                    <Svg/>
+                </Button>
+            </Grid>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

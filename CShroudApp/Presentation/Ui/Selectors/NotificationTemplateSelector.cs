@@ -38,10 +38,20 @@ public class NotificationTemplateSelector : AvaloniaObject, IDataTemplate
                 NotificationType.Error => (Control)ErrorTemplate.Build(param),
                 _ => new TextBlock { Text = $"Unknown type: {notification.Type}" }
             };
+        } else if (param is HeaderNotificationDisplayItem headNotification)
+        {
+            return headNotification.Type switch
+            {
+                NotificationType.Info => (Control)InfoTemplate.Build(param),
+                NotificationType.Success => (Control)SuccessTemplate.Build(param),
+                NotificationType.Warning => (Control)WarningTemplate.Build(param),
+                NotificationType.Error => (Control)ErrorTemplate.Build(param),
+                _ => new TextBlock { Text = $"Unknown type: {headNotification.Type}" }
+            };
         }
 
         return new TextBlock { Text = "Invalid object" };
     }
 
-    public bool Match(object data) => data is NotificationDisplayItem;
+    public bool Match(object data) => data is NotificationDisplayItem or HeaderNotificationDisplayItem;
 }

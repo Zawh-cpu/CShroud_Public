@@ -14,6 +14,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://CShroudApp/Presentation/Ui/Resources/Templates/NotificationTemplates.axaml" />
+                <ResourceInclude Source="avares://CShroudApp/Presentation/Ui/Resources/Templates/HeaderNotificationTemplates.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>   
     </Application.Resources>

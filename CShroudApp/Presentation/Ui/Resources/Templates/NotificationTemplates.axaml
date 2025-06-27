@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <DataTemplate x:Key="InfoTemplate">
+    <DataTemplate x:Key="Notification-InfoTemplate">
         <Border Classes="Notification Notification-Info">
             <StackPanel>
                 <StackPanel Spacing="8">
@@ -14,7 +14,7 @@
         </Border>
     </DataTemplate>
 
-    <DataTemplate x:Key="SuccessTemplate">
+    <DataTemplate x:Key="Notification-SuccessTemplate">
         <Border Classes="Notification Notification-Success">
             <StackPanel>
                 <StackPanel Spacing="8">
@@ -28,7 +28,7 @@
         </Border>
     </DataTemplate>
     
-    <DataTemplate x:Key="WarningTemplate">
+    <DataTemplate x:Key="Notification-WarningTemplate">
         <Border Classes="Notification Notification-Warning">
             <StackPanel>
                 <StackPanel Spacing="8">
@@ -42,7 +42,7 @@
         </Border>
     </DataTemplate>
     
-    <DataTemplate x:Key="ErrorTemplate">
+    <DataTemplate x:Key="Notification-ErrorTemplate">
         <Border Classes="Notification Notification-Error">
             <StackPanel>
                 <StackPanel Spacing="8">

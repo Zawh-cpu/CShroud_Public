@@ -6,19 +6,39 @@ namespace CShroudApp.Infrastructure.Services;
 public class NotificationManager : INotificationManager
 {
     private uint _currentIndex = 0;
+    private uint _currentHeaderIndex = 0;
+    
     private const int NotificationArrayLenght = 50;
+    private const int HeaderNotificationArrayLenght = 5;
     
     public event Action<NotificationObject>? NotificationReceived;
+    public event Action<HeaderNotificationObject>? HeaderNotificationReceived;
+    
+    public event Action? InternetConnectionRestored;
     public NotificationObject[] Notifications { get; } = new NotificationObject[NotificationArrayLenght];
+    public HeaderNotificationObject[] HeaderNotifications { get; } = new HeaderNotificationObject[HeaderNotificationArrayLenght];
+    
+    private HeaderNotificationObject? _currentInternetOffNotification;
     
     public void OnInternetInterrupt()
     {
-        //throw new NotImplementedException();
+        if (_currentInternetOffNotification != null) return;
+        
+        _currentInternetOffNotification = new HeaderNotificationObject()
+        {
+            Type = NotificationType.Error,
+            Message = "Internet connection lost",
+            Reason = HeaderNotificationReason.InternetConnectionLost
+        };
+        
+        AddHeaderNotification(_currentInternetOffNotification);
     }
 
     public void OnInternetConnectionRestored()
     {
-        //throw new NotImplementedException();
+        if (_currentInternetOffNotification == null) return;
+        InternetConnectionRestored?.Invoke();
+        _currentInternetOffNotification = null;
     }
 
     public void AddNotification(NotificationObject notification)
@@ -28,5 +48,14 @@ public class NotificationManager : INotificationManager
         _currentIndex++;
         
         NotificationReceived?.Invoke(notification);
+    }
+    
+    public void AddHeaderNotification(HeaderNotificationObject notification)
+    {
+        if (_currentHeaderIndex >= HeaderNotificationArrayLenght) _currentHeaderIndex = 0;
+        HeaderNotifications[_currentHeaderIndex] = notification;
+        _currentHeaderIndex++;
+        
+        HeaderNotificationReceived?.Invoke(notification);
     }
 }
