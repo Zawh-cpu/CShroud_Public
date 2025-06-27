@@ -5,6 +5,7 @@
       <map>
         <entry key="CShroudApp/Presentation/App.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/App.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Resources/Templates/NotificationTemplates.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Styles/Auth.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/ViewModels/Auth/FastLoginViewModel.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/Auth/AuthView.axaml" value="CShroudApp/CShroudApp.csproj" />

@@ -142,7 +142,7 @@
                         </Grid>
                     </Grid>
                 
-                    <Button Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Classes="inputButton">
+                    <Button Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Classes="inputButton" Command="{Binding  TryLoginUsingCredentialsCommand}">
                         <Grid ColumnDefinitions="*, Auto" VerticalAlignment="Center">
                             <TextBlock>Login to Your Account</TextBlock>
                             <Svg Grid.Column="1" Path="avares://CShroudApp/Assets/icons/svg/arrow-right--.svg" HorizontalAlignment="Right" Width="16" Height="16"></Svg>
