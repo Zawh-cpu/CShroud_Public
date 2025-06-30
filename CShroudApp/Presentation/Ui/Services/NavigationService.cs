@@ -19,7 +19,7 @@ public class NavigationService : INavigationService
     {
         var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
         //viewModel.SwapData(args);
-        //viewModel.OnNavigated();
+        viewModel.OnNavigated();
         ViewModelChanged?.Invoke(this, viewModel);
         
         return viewModel;

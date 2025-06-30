@@ -14,4 +14,5 @@ public interface ISessionManager
     public string? ActionToken { set; }
 
     event EventHandler? UnauthorizedSession;
+    event Action? SessionHasBeenAuthorized;
 }

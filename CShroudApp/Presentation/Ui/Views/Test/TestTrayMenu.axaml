@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CShroudApp.Presentation.Ui.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CShroudApp.Presentation.Ui.Views.TestView"
+             Background="#222">
+    <Button Content="Меню">
+        <Button.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Open CrimsonShroud" Command="{Binding Command1}" />
+                <MenuItem Header="VPN" Command="{Binding Command2}">
+                    <MenuItem Header="Enable [Proxy]"/>
+                    <MenuItem Header="Change mode">
+                        <MenuItem Header="VPN"/>
+                        <MenuItem Header="VPN And Proxy"/>
+                        <MenuItem Header="Proxy"/>
+                        <MenuItem Header="Transparent"/>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Open configuration file" Command="{Binding Command3}" />
+                <MenuItem Header="Exit" Command="{Binding Command3}" />
+            </ContextMenu>
+        </Button.ContextMenu>
+    </Button>
+</UserControl>

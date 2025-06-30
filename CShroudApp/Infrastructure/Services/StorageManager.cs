@@ -10,24 +10,30 @@ namespace CShroudApp.Infrastructure.Services;
 
 public class StorageManager : IStorageManager
 {
-    private Dictionary<string, object> _storage;
+    public struct ContainerStruct
+    {
+        public object Value;
+        public DateTime? AliveUntil;
+    }
+    
+    private Dictionary<string, ContainerStruct> _storage;
 
     public StorageManager()
     {
         _storage = Load();
     }
     
-    public Dictionary<string, object> Load()
+    public Dictionary<string, ContainerStruct> Load()
     {
         if (!File.Exists(AppConstants.CacheFilePath))
-            return new Dictionary<string, object>();
+            return new Dictionary<string, ContainerStruct>();
 
         byte[] encrypted = File.ReadAllBytes(AppConstants.CacheFilePath);
 
         var deserialized = MessagePackSerializer.Typeless.Deserialize(Decrypt(encrypted, GetEncryptionKey()))
-            as Dictionary<string, object>;
+            as Dictionary<string, ContainerStruct>;
 
-        return deserialized ?? new Dictionary<string, object>();
+        return deserialized ?? new Dictionary<string, ContainerStruct>();
     }
     
     private static byte[] GetEncryptionKey()
@@ -73,20 +79,22 @@ public class StorageManager : IStorageManager
 
     public TEntity? GetValue<TEntity>(string key) where TEntity : class
     {
-        return _storage.GetValueOrDefault(key) as TEntity;
+        var value = _storage.GetValueOrDefault(key);
+        if (!(value.AliveUntil is null || DateTime.UtcNow < value.AliveUntil)) return null;
+        return value.Value as TEntity;
     }
         
-    public async Task SetValue(string key, object data, bool saveChanges = true)
+    public async Task SetValue(string key, object data, TimeSpan? aliveTime = null, bool saveChanges = true)
     {
-        _storage[key] = data;
+        _storage[key] = new ContainerStruct { Value = data, AliveUntil = aliveTime is not null ? DateTime.UtcNow + aliveTime : null };
         if (saveChanges)
             await SaveChanges();
     } 
     
-    public async Task SetValueIfNot(string key, object data, bool saveChanges = true)
+    public async Task SetValueIfNot(string key, object data, TimeSpan? aliveTime = null, bool saveChanges = true)
     {
-        if (_storage.TryGetValue(key, out var value) && value == data) return;
-        _storage[key] = data;
+        if (_storage.TryGetValue(key, out var value) && value.Value == data && (value.AliveUntil is null || DateTime.UtcNow < value.AliveUntil)) return;
+        _storage[key] = new ContainerStruct { Value = data, AliveUntil = aliveTime is not null ? DateTime.UtcNow + aliveTime : null };
         if (saveChanges)
             await SaveChanges();
     }

@@ -14,6 +14,7 @@ public class SessionManager : ISessionManager
     public DateTime SessionExpires { get; private set; } = DateTime.MinValue;
 
     public event EventHandler? UnauthorizedSession;
+    public event Action? SessionHasBeenAuthorized;
     
     public User Session
     {
@@ -68,7 +69,10 @@ public class SessionManager : ISessionManager
         {
             var parsedToken = Token.Parse(token);
             if (parsedToken.Expiration > DateTime.Now)
+            {
                 RefreshToken = token;
+                SessionHasBeenAuthorized?.Invoke();
+            }
         }
     }
     

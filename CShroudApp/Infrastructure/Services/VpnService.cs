@@ -11,6 +11,7 @@ public class VpnService : IVpnService
     
     public event EventHandler? VpnEnabled;
     public event EventHandler? VpnDisabled;
+    public event Action<Result<object>>? VpnStartedCancellation;
     
     private readonly IVpnCore _vpnCore;
     private readonly IProxyManager _proxyManager;
@@ -19,6 +20,7 @@ public class VpnService : IVpnService
     public VpnProtocol[] SupportedProtocols => _vpnCore.SupportedProtocols;
 
     private VpnConfig? _savedCurrentSessionConfig;
+    private VpnMode? _currentEnabledMode;
 
     public VpnService(IVpnCore vpnCore, IProxyManager proxyManager, ApplicationConfig applicationConfig)
     {
@@ -32,14 +34,16 @@ public class VpnService : IVpnService
     
     public async Task<Result> EnableAsync(VpnMode mode, VpnConnectionCredentials credentials)
     {
-        _savedCurrentSessionConfig = _applicationConfig.Vpn;
-        _savedCurrentSessionConfig.Mode = mode;
-
         if (mode == VpnMode.Tun && _vpnCore.DoNeedElevationForTun)
         {
             Console.WriteLine("NEEDS TO REQUEST A RIGHTS ELEVATION TO ENABLE TUN.");
+            VpnStartedCancellation?.Invoke(Result.Unauthorized());
             return Result.Unauthorized();
         }
+        
+        _savedCurrentSessionConfig = _applicationConfig.Vpn;
+        _savedCurrentSessionConfig.Mode = mode;
+        _currentEnabledMode = mode;
         
         if (IsRunning) return Result.Conflict();
         if (!SupportedProtocols.Contains(credentials.Protocol)) return Result.Invalid();
@@ -49,26 +53,23 @@ public class VpnService : IVpnService
 
     public async Task DisableAsync()
     {
-        if (_savedCurrentSessionConfig is not null)
+        switch (_currentEnabledMode)
         {
-            switch (_savedCurrentSessionConfig.Mode)
-            {
-                case VpnMode.Proxy:
-                    if (_savedCurrentSessionConfig.SavePreviousProxy && _proxyManager.CachedProxy is not null)
-                        _proxyManager.SetupProxy(_proxyManager.CachedProxy);
-                    else
-                        _proxyManager.DisableProxy();
-                    break;
+            case VpnMode.Proxy:
+                if (_applicationConfig.Vpn.SavePreviousProxy && _proxyManager.CachedProxy is not null)
+                    _proxyManager.SetupProxy(_proxyManager.CachedProxy);
+                else
+                    _proxyManager.DisableProxy();
+                break;
             
-                case VpnMode.Tun or VpnMode.TunPlusProxy:
-                    Console.WriteLine("FWEFWEFFWEF ");
-                    if (!_vpnCore.AutoSetInboundSupportedProtocol.Contains(VpnProtocol.Tun))
-                        Console.WriteLine("Needs to disable Tun");
-                    break;
-            }
+            case VpnMode.Tun or VpnMode.TunPlusProxy:
+                if (!_vpnCore.AutoSetInboundSupportedProtocol.Contains(VpnProtocol.Tun))
+                    Console.WriteLine("Needs to disable Tun");
+                break;
         }
         
         _savedCurrentSessionConfig = null;
+        _currentEnabledMode = null;
         
         await _vpnCore.DisableAsync();
     }

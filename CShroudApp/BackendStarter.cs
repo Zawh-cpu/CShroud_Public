@@ -31,6 +31,8 @@ public static class BackendStarter
             cfg = new ApplicationConfig();
         }
 
+        Console.WriteLine(AppConstants.ConfigFilePath);
+        
         builder.Services.AddHttpClient("CrimsonShroudApiHook",
             client => client.BaseAddress = new Uri(cfg.Network.ReservedGatewayAddresses.First()));
 
@@ -44,6 +46,8 @@ public static class BackendStarter
         builder.Services.AddSingleton<ProcessFactory>();
         builder.Services.AddSingleton<IInternalDataManager, InternalDataManager>();
         builder.Services.AddSingleton<IVpnService, VpnService>();
+        builder.Services.AddSingleton<IQuickAuthService, QuickAuthService>();
+        builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
 
         builder.Services.AddSingleton<IVpnCore, SingBoxCore>();
 
@@ -61,6 +65,9 @@ public static class BackendStarter
                 builder.Services.Add(serviceDescriptor);
         
         var app = builder.Build();
+        var getLocalizationService = app.Services.GetRequiredService<ILocalizationService>();
+        getLocalizationService.CurrentLocalization = cfg.Localization;
+        Console.WriteLine(getLocalizationService.CurrentLocalization);
         return app;
     }
 }

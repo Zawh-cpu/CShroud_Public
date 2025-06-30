@@ -13,6 +13,7 @@ public partial class AppViewModel : ViewModelBase
         {
             var window = desktop.Windows.OfType<Window>().FirstOrDefault();
             window?.Show();
+            //window?.;
         }
     }
 

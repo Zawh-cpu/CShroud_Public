@@ -5,6 +5,7 @@ using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CShroudApp.Core.Interfaces;
 using CShroudApp.Presentation.Ui.Interfaces;
 using CShroudApp.Presentation.Ui.Services;
 using CShroudApp.Presentation.Ui.ViewModels;
@@ -18,6 +19,8 @@ namespace CShroudApp.Presentation.Ui;
 
 public partial class App : Avalonia.Application
 {
+    private IVpnService? _vpnService;
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -31,8 +34,12 @@ public partial class App : Avalonia.Application
         collection.AddSingleton<MainViewModel>();
         collection.AddSingleton<LoginViewModel>();
         collection.AddSingleton<QuickLoginViewModel>();
+        collection.AddSingleton<DashboardViewModel>();
         
         var host = BackendStarter.Start([], collection);
+        
+        _vpnService = host.Services.GetRequiredService<IVpnService>();
+        
         try
         {
 
@@ -45,6 +52,7 @@ public partial class App : Avalonia.Application
                     {
                         DataContext = vm
                     };
+                    
                 }
                 else
                 {
@@ -53,7 +61,9 @@ public partial class App : Avalonia.Application
                         DataContext = vm
                     };
                 }
-
+                
+                //Console.WriteLine("Apps exit configured");
+                //desktop.Exit += OnApplicationExit;
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
@@ -72,7 +82,9 @@ public partial class App : Avalonia.Application
                     };
                 }
             }
-
+            
+            AppDomain.CurrentDomain.ProcessExit += OnEnvironmentExit;
+            
             base.OnFrameworkInitializationCompleted();
         }
         catch (Exception ex)
@@ -92,5 +104,11 @@ public partial class App : Avalonia.Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
+    }
+
+    private void OnEnvironmentExit(object? sender, EventArgs e)
+    {
+        if (_vpnService is not null && _vpnService.IsRunning)
+            Task.WaitAll(_vpnService.DisableAsync());
     }
 }

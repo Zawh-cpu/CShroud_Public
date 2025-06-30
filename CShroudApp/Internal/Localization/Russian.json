@@ -1,0 +1,8 @@
+﻿{
+  "VpnMode-Tun": "VPN",
+  "VpnMode-TunPlusProxy": "VPN&Proxy",
+  "VpnMode-Proxy": "Proxy",
+  "VpnMode-TransparentProxy": "Прозрачность",
+  "Error-InsufficientRights": "Недостаточно прав",
+  "VpnService-AdminRightsRequired-Text": "Для запуска этого режима\nнеобходимо повышение прав."
+}

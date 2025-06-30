@@ -15,7 +15,7 @@ public class VpnConnectionCredentials
     
     public required List<string> TransparentHosts { get; set; }
     
-    public required string YourIPv4Address { get; set; }
+    public required string YourAddress { get; set; }
     
     public required DateTime Obtained { get; set; }
     public required JsonObject Credentials { get; set; }

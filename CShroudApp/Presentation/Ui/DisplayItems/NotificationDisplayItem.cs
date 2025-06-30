@@ -1,18 +1,21 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Timers;
+using Avalonia.Input;
+using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Core.Entities;
 using Timer = System.Timers.Timer;
 
 namespace CShroudApp.Presentation.Ui.DisplayItems;
 
-public class NotificationDisplayItem : INotifyPropertyChanged, IDisposable
+public partial class NotificationDisplayItem : INotifyPropertyChanged, IDisposable
 {
     private Timer? _timer;
     
     public event PropertyChangedEventHandler? PropertyChanged;
     
     public event Action? NotificationTimeOut;
+    public event Action? NotificationClicked;
     
     public required string Title { get; set; }
     public required string Message { get; set; }
@@ -33,6 +36,8 @@ public class NotificationDisplayItem : INotifyPropertyChanged, IDisposable
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
+    
+    private void Clicked(object? sender, PointerPressedEventArgs e) => NotificationClicked?.Invoke();
 
     public void Dispose()
     {

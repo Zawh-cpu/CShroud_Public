@@ -6,6 +6,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Core.Entities;
+using CShroudApp.Core.Interfaces;
 using CShroudApp.Presentation.Ui.DisplayItems;
 using CShroudApp.Presentation.Ui.Interfaces;
 using CShroudApp.Presentation.Ui.ViewModels.Auth;
@@ -20,8 +21,6 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private ViewModelBase _currentView = null!;
     
-    public ICommand ToLoginCommand { get; }
-    
     private readonly INavigationService _navigationService;
 
     private const int MaxDisplayedNotificationsCount = 4;
@@ -30,7 +29,7 @@ public partial class MainViewModel : ViewModelBase
     
     public AvaloniaList<HeaderNotificationDisplayItem> HeaderNotifications { get; } = new();
 
-    public MainViewModel(INavigationService navigationService, INotificationManager notificationManager)
+    public MainViewModel(INavigationService navigationService, INotificationManager notificationManager, ISessionManager sessionManager)
     {
         _navigationService = navigationService;
         
@@ -43,22 +42,22 @@ public partial class MainViewModel : ViewModelBase
             if (notify is not null)
                 Dispatcher.UIThread.Invoke(() => HeaderNotifications.Remove(notify));
         });;
-
-        ToLoginCommand = new RelayCommand(() =>
-        {
-            navigationService.GoTo<LoginViewModel>();
-        });
+        
+        sessionManager.SessionHasBeenAuthorized += () => _navigationService.GoTo<DashboardViewModel>();
         
         try
         {
-            _navigationService.GoTo<LoginViewModel>();
+            if (sessionManager.RefreshToken is null)
+                _navigationService.GoTo<LoginViewModel>();
+            else
+                _navigationService.GoTo<DashboardViewModel>();
 
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
-
+        
         //#if DEBUG
         //        this.AttachDevTools(); // 👈 Включение инструментов отладки
         //#endif
@@ -93,6 +92,13 @@ public partial class MainViewModel : ViewModelBase
             await Dispatcher.UIThread.InvokeAsync(() => Notifications.Remove(notify));
             notify.Dispose();
         };
+
+        notify.NotificationClicked += async () =>
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => Notifications.Remove(notify));
+            notify.Dispose();
+        };
+        
         Notifications.Add(notify);
         notify.StartCountdown(5000);
     }

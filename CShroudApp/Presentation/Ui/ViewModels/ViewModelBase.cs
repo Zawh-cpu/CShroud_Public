@@ -17,4 +17,6 @@ public class ViewModelBase : ObservableObject
         CancellationTokenSource?.Dispose();
         CancellationTokenSource = null;
     }
+    
+    public virtual void OnNavigated() {}
 }

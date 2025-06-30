@@ -79,14 +79,14 @@ public class SingBoxCore : IVpnCore
     {
         var levels = new Dictionary<LogLevelMode, string>
         {
-            [LogLevelMode.Off] = "none",
+            [LogLevelMode.Off] = "fatal",
             [LogLevelMode.Info] = "info",
             [LogLevelMode.Warning] = "warn",
             [LogLevelMode.Error] = "error",
             [LogLevelMode.Debug] = "debug"
         };
 
-        _config.Log = new() { Level = levels.GetValueOrDefault(_settings.LogLevel, "none") };
+        _config.Log = new() { Level = levels.GetValueOrDefault(_settings.LogLevel, "none"), Disabled = _settings.LogLevel == LogLevelMode.Off };
     }
 
     private void SetupDns(List<string> transparedHosts)
@@ -444,7 +444,9 @@ public class SingBoxCore : IVpnCore
     
     public async Task<Result> EnableAsync(VpnMode mode, VpnConnectionCredentials credentials)
     {
-        _config = new TopConfig();
+        try
+        {
+            _config = new TopConfig();
         SetupLogs();
         SetupDns(credentials.TransparentHosts);
         SetupInbounds(mode);
@@ -472,6 +474,12 @@ public class SingBoxCore : IVpnCore
             await _process.StandardInput.WriteAsync(JsonSerializer.Serialize(_config, SingBoxJsonContext.Default.TopConfig));
         
         _process.StandardInput.Close();
+        
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
         
         return Result.Success();
     }

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Ardalis.Result;
 using CShroudApp.Application.DTOs;
 using CShroudApp.Core.Entities;
@@ -51,6 +52,7 @@ public class ApiRepository : IApiRepository
     public ApiRepository(IHttpClientFactory httpClientFactory, INotificationManager notificationManager)
     {
         _client = httpClientFactory.CreateClient("CrimsonShroudApiHook");
+        Console.WriteLine(_client.BaseAddress);
         _notificationManager = notificationManager;
     }
     
@@ -167,6 +169,36 @@ public class ApiRepository : IApiRepository
         if (dto is null) return Result.Error();
 
         return dto;
+    }
+    
+    public async Task<Result<VpnConnectionCredentials>> TryConnectToVpnNetworkAsync(VpnProtocol[] supportedProtocols, string location)
+    {
+        return new VpnConnectionCredentials()
+        {
+            Host = "localhost",
+            Port = 443,
+            IpAddressV4 = "127.0.0.1",
+            IpAddressV6 = "::1",
+            Location = "frankfurt",
+            Obtained = DateTime.UtcNow,
+            Protocol = VpnProtocol.Vless,
+            YourAddress = "127.0.0.1",
+            TransparentHosts = new()
+            {
+                "frankfurt.reality.zawh.ru",
+            },
+            Credentials = new JsonObject()
+            {
+                ["Host"] = "frankfurt.reality.zawh.ru",
+                ["Port"] = 443,
+                ["Uuid"] = "8d50da4e-fff4-4188-bbd1-7d620c7296f0",
+                ["Flow"] = "xtls-rprx-vision",
+                ["ServerName"] = "google.com",
+                ["Insecure"] = "false",
+                ["PublicKey"] = "8AZQljbSjvPMPvcjizPM4JpTmcHBPWx_stM_h0gofEI",
+                ["ShortId"] = "4ae60b64b5cd"
+            }
+        };
     }
     
     public async Task Test()

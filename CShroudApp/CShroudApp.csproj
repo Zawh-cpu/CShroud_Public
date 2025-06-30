@@ -27,6 +27,7 @@
       <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.1" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="MessagePack" Version="3.1.3" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.6" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
@@ -51,6 +52,12 @@
         <None Update="Assets\**">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <Compile Remove="test.cs" />
+        <None Include="test.cs" />
+        <AvaloniaXaml Remove="Presentation\Ui\Views\Test\TestTrayMenu.axaml" />
+        <None Include="Presentation\Ui\Views\Test\TestTrayMenu.axaml" />
+        <Compile Remove="Presentation\Ui\Views\Test\TestTrayMenu.axaml.cs" />
+        <None Include="Presentation\Ui\Views\Test\TestTrayMenu.axaml.cs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -66,10 +73,6 @@
         </None>
         <Compile Remove="Presentation\Ui\UiStarter.cs" />
         <None Include="Presentation\Ui\UiStarter.cs.deprecated" />
-        <Compile Update="Presentation\Ui\Views\TestView.axaml.cs">
-          <DependentUpon>Test.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Presentation\Ui\Views\Auth\LoginView.axaml.cs">
           <DependentUpon>Test.axaml</DependentUpon>
           <SubType>Code</SubType>

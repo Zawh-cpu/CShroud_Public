@@ -18,9 +18,11 @@
         <entry key="CShroudApp/Presentation/Ui/Views/AuthWindowView.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/DashBoard.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/DashBoardView.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Views/DashboardView.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/MainView.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/MainWindow.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/Test.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Views/Test/TestTrayMenu.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/TestView.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Views/MainWindow.axaml" value="CShroudApp/CShroudApp.csproj" />
       </map>

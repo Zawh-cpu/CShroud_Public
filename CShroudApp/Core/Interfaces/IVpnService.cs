@@ -5,6 +5,8 @@ namespace CShroudApp.Core.Interfaces;
 
 public interface IVpnService
 {
+    VpnProtocol[] SupportedProtocols { get; }
+    
     Task<Result> EnableAsync(VpnMode mode, VpnConnectionCredentials credentials);
     Task DisableAsync();
     
@@ -14,4 +16,5 @@ public interface IVpnService
     
     event EventHandler? VpnEnabled;
     event EventHandler? VpnDisabled;
+    event Action<Result<object>>? VpnStartedCancellation;
 }

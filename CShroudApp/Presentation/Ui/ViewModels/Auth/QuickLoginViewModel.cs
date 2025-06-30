@@ -4,6 +4,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Application.DTOs;
+using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
 using CShroudApp.Presentation.Ui.Interfaces;
 
@@ -13,7 +14,7 @@ public partial class QuickLoginViewModel : ViewModelBase
 {
     [ObservableProperty]
     private string _validCode = string.Empty;
-    private QuickAuthSessionDto _quickAuthSessionDto = null!;
+    private QuickAuthSessionDto? _quickAuthSessionDto = null!;
     
     public ICommand OpenTelegramCommand { get; }
     public ICommand GoBackCommand { get; }
@@ -22,8 +23,10 @@ public partial class QuickLoginViewModel : ViewModelBase
     private readonly IApiRepository _apiRepository;
     private readonly IQuickAuthService _quickAuthService;
     private readonly ISessionManager _sessionManager;
+    private readonly ILocalizationService _localizationService;
+    private readonly INotificationManager _notificationManager;
     
-    public QuickLoginViewModel(INavigationService navigationService, IApiRepository apiRepository, IQuickAuthService quickAuthService, ISessionManager sessionManager)
+    public QuickLoginViewModel(INavigationService navigationService, IApiRepository apiRepository, IQuickAuthService quickAuthService, ISessionManager sessionManager, ILocalizationService localizationService, INotificationManager notificationManager)
     {
         _quickAuthService = quickAuthService;
         _quickAuthService.OnSessionCreated += OnSessionCreated;
@@ -34,8 +37,14 @@ public partial class QuickLoginViewModel : ViewModelBase
         _navigationService = navigationService;
         _apiRepository = apiRepository;
         _sessionManager = sessionManager;
+        _localizationService = localizationService;
+        _notificationManager = notificationManager;
         
-        OpenTelegramCommand = new RelayCommand(() => OpenTelegram(_quickAuthSessionDto.Variants, _quickAuthSessionDto.SessionId.ToString()));
+        OpenTelegramCommand = new RelayCommand(() =>
+        {
+            if (_quickAuthSessionDto is not null)
+                OpenTelegram(_quickAuthSessionDto.Variants, _quickAuthSessionDto.SessionId.ToString());
+        });
         GoBackCommand = new RelayCommand(() => BackToAuth());
     }
 
@@ -45,7 +54,7 @@ public partial class QuickLoginViewModel : ViewModelBase
         _quickAuthSessionDto = session;
     }
 
-    public void OnNavigated()
+    public override void OnNavigated()
     {
         var cts = new CancellationTokenSource();
         _quickAuthService.RunSession(cts.Token);
@@ -53,13 +62,25 @@ public partial class QuickLoginViewModel : ViewModelBase
     
     private void OnSessionFailed()
     {
-        Console.WriteLine("OnSessionFailed");
+        _notificationManager.AddNotification(new NotificationObject()
+        {
+            Title = _localizationService.Translate("ErrorFailedStartQuickAuth"),
+            Message = _localizationService.Translate("ErrorFailedStartQuickAuth-Text"),
+            Type = NotificationType.Error
+        });
     }
     
     private void OnAttemptSuccess(object? sender, SignInDto session)
     {
+        /*_notificationManager.AddNotification(new NotificationObject()
+        {
+            Title = _localizationService.Translate("QuickAuthSuccess"),
+            Message = _localizationService.Translate("QuickAuthSuccess-Text"),
+            Type = NotificationType.Success
+        });*/
+        
         _sessionManager.RefreshToken = session.RefreshToken;
-        // _navigationService.GoTo<DashBoardViewModel>();
+        _navigationService.GoTo<DashboardViewModel>();
     }
     
     private void OnAttemptDeclined()
@@ -67,12 +88,12 @@ public partial class QuickLoginViewModel : ViewModelBase
         Console.WriteLine("OnAttemptDeclined");
     }
 
-    public void BackToAuth()
+    private void BackToAuth()
     {
-        // _navigationService.GoTo<AuthViewModel>();
+        _navigationService.GoTo<LoginViewModel>();
     }
 
-    public void OpenTelegram(uint[] variants, string fastLoginId)
+    private void OpenTelegram(uint[] variants, string fastLoginId)
     {
         var data = $"verify_{fastLoginId}";
         

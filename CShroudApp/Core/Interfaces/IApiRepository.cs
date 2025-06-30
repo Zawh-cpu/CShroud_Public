@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using CShroudApp.Application.DTOs;
+using CShroudApp.Core.Entities;
 
 namespace CShroudApp.Core.Interfaces;
 
@@ -13,5 +14,9 @@ public interface IApiRepository
     Task<Result<SignInDto>> FinalizeQuickAuthSessionAsync(QuickAuthDto data);
     Task<Result<ActionTokenRefreshDto>> RefreshActionTokenAsync(string refreshToken);
     Task<Result<GetUserDto>> GetUserInformationAsync();
+
+    Task<Result<VpnConnectionCredentials>> TryConnectToVpnNetworkAsync(VpnProtocol[] supportedProtocols,
+        string location);
+    
     Task Test();
 }
