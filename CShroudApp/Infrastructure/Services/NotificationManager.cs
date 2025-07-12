@@ -1,5 +1,6 @@
 ﻿using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
+using CShroudApp.Infrastructure.StaticServices;
 
 namespace CShroudApp.Infrastructure.Services;
 
@@ -27,7 +28,7 @@ public class NotificationManager : INotificationManager
         _currentInternetOffNotification = new HeaderNotificationObject()
         {
             Type = NotificationType.Error,
-            Message = "Internet connection lost",
+            Message = LocalizationService.Translate("Error-InternetConnectionLost"),
             Reason = HeaderNotificationReason.InternetConnectionLost
         };
         

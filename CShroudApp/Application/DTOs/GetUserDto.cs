@@ -1,4 +1,5 @@
-﻿using CShroudApp.Core.Entities.User;
+﻿using System;
+using CShroudApp.Core.Entities.User;
 
 namespace CShroudApp.Application.DTOs;
 

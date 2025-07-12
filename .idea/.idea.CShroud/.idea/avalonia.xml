@@ -21,6 +21,7 @@
         <entry key="CShroudApp/Presentation/Ui/Views/DashboardView.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/MainView.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/MainWindow.axaml" value="CShroudApp/CShroudApp.csproj" />
+        <entry key="CShroudApp/Presentation/Ui/Views/Settings/GeneralSettings.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/Test.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/Test/TestTrayMenu.axaml" value="CShroudApp/CShroudApp.csproj" />
         <entry key="CShroudApp/Presentation/Ui/Views/TestView.axaml" value="CShroudApp/CShroudApp.csproj" />

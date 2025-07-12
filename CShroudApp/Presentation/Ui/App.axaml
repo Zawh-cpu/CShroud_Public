@@ -4,6 +4,8 @@
              xmlns:local="using:CShroudApp.Presentation.Ui"
              x:DataType="viewModels:AppViewModel"
              xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
+             xmlns:entities="clr-namespace:CShroudApp.Core.Entities"
+             xmlns:mext="clr-namespace:CShroudApp.Presentation.Ui.MarkupExtensions"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -11,9 +13,9 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
     
-    <Application.DataContext>
+    <!--<Application.DataContext>
         <viewModels:AppViewModel />
-    </Application.DataContext>
+    </Application.DataContext>-->
     
     <Application.Resources>
         <ResourceDictionary>
@@ -30,26 +32,23 @@
     
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon ToolTipText="CrimsonShroud" Icon="/Assets/logo.ico">
+            <TrayIcon ToolTipText="CrimsonShroud" Icon="/Assets/logo.ico" Command="{Binding ShowCommand}">
                 <TrayIcon.Menu>
-                    <NativeMenu>
-                        <NativeMenuItem Header="Open CrimsonShroud" Command="{Binding ShowCommand}" />
-                        <NativeMenuItem Header="VPN">
+                    <NativeMenu Opening="NativeTrayMenu_OnOpening">
+                        <NativeMenuItem Header="{mext:Loc Tray-Ui-ShowApp}" Command="{Binding ShowCommand}" />
+                        <NativeMenuItem Header="{mext:Loc Tray-Ui-HideApp}" Command="{Binding HideCommand}" />
+                        <NativeMenuItemSeparator/>
+                        <NativeMenuItem Header="{Binding VpnTogglerText}" Command="{Binding ToggleVpnCommand}"/>
+                        <NativeMenuItem Header="{mext:Loc Tray-Ui-ChangeMode}">
                             <NativeMenu>
-                                <NativeMenuItem Header="Enable [Proxy]"/>
-                                <NativeMenuItem Header="Change Mode">
-                                    <NativeMenu>
-                                        <NativeMenuItem Header="VPN"/>
-                                        <NativeMenuItem Header="VPN And Proxy"/>
-                                        <NativeMenuItem Header="Proxy"/>
-                                        <NativeMenuItem Header="Transparent"/>
-                                    </NativeMenu>
-                                </NativeMenuItem>
+                                <NativeMenuItem Header="{mext:Loc VpnMode-Tun}" Command="{Binding SetModeCommand}" CommandParameter="{x:Static entities:VpnMode.Tun}"/>
+                                <NativeMenuItem Header="{mext:Loc VpnMode-TunPlusProxy}" Command="{Binding SetModeCommand}" CommandParameter="{x:Static entities:VpnMode.TunPlusProxy}"/>
+                                <NativeMenuItem Header="{mext:Loc VpnMode-Proxy}" Command="{Binding SetModeCommand}" CommandParameter="{x:Static entities:VpnMode.Proxy}"/>
+                                <NativeMenuItem Header="{mext:Loc VpnMode-TransparentProxy}" Command="{Binding SetModeCommand}" CommandParameter="{x:Static entities:VpnMode.TransparentProxy}"/>
                             </NativeMenu>
                         </NativeMenuItem>
-                        <NativeMenuItem Header="Open configuration file"/>
                         <NativeMenuItemSeparator/>
-                        <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                        <NativeMenuItem Header="{mext:Loc Tray-Ui-Exit}" Command="{Binding ExitCommand}" />
                     </NativeMenu>
                 </TrayIcon.Menu>
             </TrayIcon>

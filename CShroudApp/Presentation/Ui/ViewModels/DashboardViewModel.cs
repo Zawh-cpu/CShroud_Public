@@ -1,26 +1,26 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Ardalis.Result;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Core.Configs;
 using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
-using Microsoft.Extensions.Options;
+using CShroudApp.Infrastructure.StaticServices;
 
 namespace CShroudApp.Presentation.Ui.ViewModels;
 
-public partial class DashboardViewModel : ViewModelBase
+public partial class DashboardViewModel : ViewModelBase, IDisposable
 {
     private readonly ISessionManager _sessionManager;
     private readonly IVpnService _vpnService;
     private readonly IStorageManager _storageManager;
     private readonly ApplicationConfig _config;
-    private readonly ILocalizationService _localizationService;
     private readonly IApiRepository _apiRepository;
     private readonly INotificationManager _notificationManager;
+    private readonly IConfigManager _configManager;
+    private readonly IToastManager _toastManager;
     
     public DateTime Start = DateTime.UtcNow;
     private DispatcherTimer _timer;
@@ -30,7 +30,7 @@ public partial class DashboardViewModel : ViewModelBase
     
     public class ModeItem
     {
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public int? HttpPort { get; set; }
         public int? SocksPort { get; set; }
     }
@@ -43,26 +43,26 @@ public partial class DashboardViewModel : ViewModelBase
 
     public string CurrentIpAddress { get; set; } = "91.144.254.24";
     
-    public DashboardViewModel(ISessionManager sessionManager, IVpnService vpnService, ApplicationConfig config, IStorageManager storageManager, ILocalizationService localizationService, IApiRepository apiRepository, INotificationManager notificationManager)
+    public DashboardViewModel(ISessionManager sessionManager, IVpnService vpnService, ApplicationConfig config, IStorageManager storageManager, IApiRepository apiRepository, INotificationManager notificationManager, IConfigManager configManager, IToastManager toastManager)
     {
         _sessionManager = sessionManager;
         _vpnService = vpnService;
         _config = config;
         _storageManager = storageManager;
-        _localizationService = localizationService;
         _apiRepository = apiRepository;
         _notificationManager = notificationManager;
+        _configManager = configManager;
+        _toastManager = toastManager;
         
-        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.Tun, new ModeItem { Name = _localizationService.Translate("VpnMode-Tun"), HttpPort = null, SocksPort = null }));
-        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.TunPlusProxy, new ModeItem { Name = _localizationService.Translate("VpnMode-TunPlusProxy"), HttpPort = (int)_config.Vpn.Inputs.Http.Port, SocksPort = (int)_config.Vpn.Inputs.Socks.Port }));
-        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.Proxy, new ModeItem { Name = _localizationService.Translate("VpnMode-Proxy"), HttpPort = (int)_config.Vpn.Inputs.Http.Port, SocksPort = (int)_config.Vpn.Inputs.Socks.Port }));
-        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.TransparentProxy, new ModeItem { Name = _localizationService.Translate("VpnMode-TransparentProxy"), HttpPort = (int)_config.Vpn.Inputs.Http.Port, SocksPort = (int)_config.Vpn.Inputs.Socks.Port }));
+        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.Tun, new ModeItem { Name = LocalizationService.Translate("VpnMode-Tun"), HttpPort = null, SocksPort = null }));
+        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.TunPlusProxy, new ModeItem { Name = LocalizationService.Translate("VpnMode-TunPlusProxy"), HttpPort = (int)_config.Vpn.Inputs.Http.Port, SocksPort = (int)_config.Vpn.Inputs.Socks.Port }));
+        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.Proxy, new ModeItem { Name = LocalizationService.Translate("VpnMode-Proxy"), HttpPort = (int)_config.Vpn.Inputs.Http.Port, SocksPort = (int)_config.Vpn.Inputs.Socks.Port }));
+        Modes.Add(new KeyValuePair<VpnMode, ModeItem>(VpnMode.TransparentProxy, new ModeItem { Name = LocalizationService.Translate("VpnMode-TransparentProxy"), HttpPort = (int)_config.Vpn.Inputs.Http.Port, SocksPort = (int)_config.Vpn.Inputs.Socks.Port }));
         
         _timer = new DispatcherTimer();
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
         
-        Console.WriteLine(_sessionManager.Session.Nickname);
         ToggleVpnCommand = new RelayCommand(() => Task.Run(ToggleVpn));
 
         SelectedMode = Modes.FirstOrDefault(x => x.Key == _config.Vpn.Mode).Value ?? Modes.FirstOrDefault(x => x.Key == VpnMode.Tun).Value;
@@ -70,6 +70,7 @@ public partial class DashboardViewModel : ViewModelBase
         _vpnService.VpnEnabled += OnVpnEnabled;
         _vpnService.VpnDisabled += OnVpnDisabled;
         _vpnService.VpnStartedCancellation += OnVpnStartedCancellation;
+        _configManager.ConfigChanged += OnConfigChanged;
     }
 
     public async Task ToggleVpn()
@@ -92,8 +93,8 @@ public partial class DashboardViewModel : ViewModelBase
             {
                 _notificationManager.AddNotification(new NotificationObject()
                 {
-                    Title = _localizationService.Translate("VpnNetwork-ErrorConnection"),
-                    Message = _localizationService.Translate("VpnNetwork-ErrorConnection-Text"),
+                    Title = LocalizationService.Translate("VpnNetwork-ErrorConnection"),
+                    Message = LocalizationService.Translate("VpnNetwork-ErrorConnection-Text"),
                     Type = NotificationType.Error
                 });
                 
@@ -109,6 +110,7 @@ public partial class DashboardViewModel : ViewModelBase
         Console.WriteLine("Connection started");
         Start = DateTime.UtcNow;
         _timer.Start();
+        _toastManager.SendToast();
     }
 
     private void OnVpnDisabled(object? sender, EventArgs e)
@@ -125,8 +127,8 @@ public partial class DashboardViewModel : ViewModelBase
             case ResultStatus.Unauthorized:
                 _notificationManager.AddNotification(new NotificationObject()
                 {
-                    Title = _localizationService.Translate("Error-InsufficientRights"),
-                    Message = _localizationService.Translate("VpnService-AdminRightsRequired-Text"),
+                    Title = LocalizationService.Translate("Error-InsufficientRights"),
+                    Message = LocalizationService.Translate("VpnService-AdminRightsRequired-Text"),
                     Type = NotificationType.Error
                 });
                 break;
@@ -158,8 +160,41 @@ public partial class DashboardViewModel : ViewModelBase
         var key = Modes.FirstOrDefault(x => x.Value.Name == value.Name).Key;
 
         _config.Vpn.Mode = key;
-        //Task.Run(_storageManager.SaveConfigAsync);
-        //if (_vpnService.IsRunning)
-        //    Task.Run(async() => await _vpnService.RestartAsync(_settingsConfig.Network.Mode));
+        Task.Run(async () =>
+        {
+            _ = _configManager.SaveConfigAsync();
+            if (_vpnService.IsRunning)
+            {
+                VpnConnectionCredentials? credentials = _storageManager.GetValue<VpnConnectionCredentials>("VpnConnectionCredentials");
+                if (credentials is null)
+                {
+                    var temp = await _apiRepository.TryConnectToVpnNetworkAsync(_vpnService.SupportedProtocols,
+                        "frankfurt");
+                    if (temp.IsSuccess) credentials = temp.Value;
+                }
+
+                if (credentials is not null)
+                    await _vpnService.RestartAsync(_config.Vpn.Mode, credentials);
+
+            }
+        });
+        
+        _configManager.NotifyConfigChanged();
+    }
+
+    public void OnConfigChanged()
+    {
+        var mode = Modes.FirstOrDefault(x => x.Key == _config.Vpn.Mode).Value;
+        if (mode is null) return;
+
+        SelectedMode = mode;
+    }
+    
+    public void Dispose()
+    {
+        _vpnService.VpnEnabled -= OnVpnEnabled;
+        _vpnService.VpnDisabled -= OnVpnDisabled;
+        _vpnService.VpnStartedCancellation -= OnVpnStartedCancellation;
+        _configManager.ConfigChanged -= OnConfigChanged;
     }
 }

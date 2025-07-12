@@ -3,4 +3,7 @@
 public interface IConfigManager
 {
     Task SaveConfigAsync();
+    
+    event Action? ConfigChanged;
+    void NotifyConfigChanged();
 }

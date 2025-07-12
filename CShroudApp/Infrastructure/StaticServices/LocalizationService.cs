@@ -3,9 +3,9 @@ using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
 using CShroudApp.Core.JsonContexts;
 
-namespace CShroudApp.Infrastructure.Services;
+namespace CShroudApp.Infrastructure.StaticServices;
 
-public class LocalizationService : ILocalizationService
+public static class LocalizationService
 {
     private static readonly Dictionary<Localization, string> LocalizationFileNames = new()
     {
@@ -13,13 +13,13 @@ public class LocalizationService : ILocalizationService
         [Localization.Russian] = "Russian.json"
     };
     
-    private Dictionary<Localization, Dictionary<string, string>> LocalizationsBase { get; } = new();
-    private readonly Dictionary<(Localization, string), string> _translateCache = new();
+    private static Dictionary<Localization, Dictionary<string, string>> LocalizationsBase { get; } = LoadLocalizationBase();
+    private static readonly Dictionary<(Localization, string), string> TranslateCache = new();
+    public static Localization CurrentLocalization { get; set; } = Localization.English;
     
-    public Localization CurrentLocalization { get; set; } = Localization.English;
-    
-    public LocalizationService()
+    public static Dictionary<Localization, Dictionary<string, string>> LoadLocalizationBase()
     {
+        Dictionary<Localization, Dictionary<string, string>> localBase = new();
         foreach (var localization in LocalizationFileNames.Keys)
         {
             var path = Path.Combine(AppConstants.InternalLocalizationFolderPath, LocalizationFileNames[localization]);
@@ -30,34 +30,36 @@ public class LocalizationService : ILocalizationService
                 var local = JsonSerializer.Deserialize(File.ReadAllText(path),
                     ConfigsJsonContext.Default.DictionaryStringString);
                 if (local is not null)
-                    LocalizationsBase[localization] = local;
+                    localBase[localization] = local;
             }
             catch (Exception)
             {
                 // ignored
             }
         }
+        
+        return localBase;
     }
     
-    public string Translate(string key)
+    public static string Translate(string key)
     {
         var cacheKey = (CurrentLocalization, key);
-        if (_translateCache.TryGetValue(cacheKey, out var cachedValue))
+        if (TranslateCache.TryGetValue(cacheKey, out var cachedValue))
             return cachedValue;
         
         var value = LocalizationsBase.GetValueOrDefault(CurrentLocalization, new Dictionary<string, string>()).GetValueOrDefault(key, key);
-        _translateCache[cacheKey] = value;
+        TranslateCache[cacheKey] = value;
         return value;
     }
     
-    public string Translate(string key, Localization localization)
+    public static string Translate(string key, Localization localization)
     {
         var cacheKey = (localization, key);
-        if (_translateCache.TryGetValue(cacheKey, out var cachedValue))
+        if (TranslateCache.TryGetValue(cacheKey, out var cachedValue))
             return cachedValue;
         
         var value = LocalizationsBase.GetValueOrDefault(localization, new Dictionary<string, string>()).GetValueOrDefault(key, key);
-        _translateCache[cacheKey] = value;
+        TranslateCache[cacheKey] = value;
         return value;
     }
 }

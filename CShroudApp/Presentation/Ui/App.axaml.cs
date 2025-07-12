@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CShroudApp.Core.Interfaces;
 using CShroudApp.Presentation.Ui.Interfaces;
+using CShroudApp.Presentation.Ui.MarkupExtensions;
 using CShroudApp.Presentation.Ui.Services;
 using CShroudApp.Presentation.Ui.ViewModels;
 using CShroudApp.Presentation.Ui.ViewModels.Auth;
@@ -20,13 +21,8 @@ namespace CShroudApp.Presentation.Ui;
 public partial class App : Avalonia.Application
 {
     private IVpnService? _vpnService;
-    
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 
-    public override void OnFrameworkInitializationCompleted()
+    public static ServiceCollection GetUiDependencyCollection()
     {
         var collection = new ServiceCollection();
         collection.AddSingleton<INavigationService, NavigationService>();
@@ -35,14 +31,26 @@ public partial class App : Avalonia.Application
         collection.AddSingleton<LoginViewModel>();
         collection.AddSingleton<QuickLoginViewModel>();
         collection.AddSingleton<DashboardViewModel>();
+        collection.AddSingleton<AppViewModel>();
         
-        var host = BackendStarter.Start([], collection);
+        return collection;
+    }
+    
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        var host = BackendStarter.Start([], []);
         
         _vpnService = host.Services.GetRequiredService<IVpnService>();
         
         try
         {
 
+            DataContext = host.Services.GetRequiredService<AppViewModel>();
             var vm = host.Services.GetService<MainViewModel>();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -110,5 +118,10 @@ public partial class App : Avalonia.Application
     {
         if (_vpnService is not null && _vpnService.IsRunning)
             Task.WaitAll(_vpnService.DisableAsync());
+    }
+
+    private void NativeTrayMenu_OnOpening(object? sender, EventArgs e)
+    {
+        Console.WriteLine("FWFWEFWEFWEFWFEWFEWFWEFEWFEWFEWFEWFFWEFWEFWF");
     }
 }

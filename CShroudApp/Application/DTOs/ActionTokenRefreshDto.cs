@@ -1,4 +1,6 @@
-﻿namespace CShroudApp.Application.DTOs;
+﻿using System;
+
+namespace CShroudApp.Application.DTOs;
 
 public class ActionTokenRefreshDto
 {

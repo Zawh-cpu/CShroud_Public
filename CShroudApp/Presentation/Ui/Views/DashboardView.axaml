@@ -5,6 +5,7 @@
         xmlns:viewModels="clr-namespace:CShroudApp.Presentation.Ui.ViewModels"
         mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
         x:Class="CShroudApp.Presentation.Ui.Views.DashboardView"
+        xmlns:mext="clr-namespace:CShroudApp.Presentation.Ui.MarkupExtensions"
         Background="#161616">
         
         <UserControl.Styles>
@@ -74,7 +75,7 @@
                                                                 </Border>
                                                                 <Grid Grid.Column="2" RowDefinitions="Auto, 2, Auto">
                                                                         <TextBlock FontWeight="Medium" FontSize="16" Foreground="#FFF">0 KB/s</TextBlock>
-                                                                        <TextBlock Grid.Row="2" FontWeight="Medium" FontSize="14" Foreground="#545454">Upload</TextBlock>
+                                                                        <TextBlock Grid.Row="2" FontWeight="Medium" FontSize="14" Foreground="#545454" Text="{mext:Loc DashBoard-Ui-Stats-Upload}"/>
                                                                 </Grid>
                                                         </Grid>
                                                         
@@ -90,7 +91,7 @@
                                                                 </Border>
                                                                 <Grid Grid.Column="0" RowDefinitions="Auto, 2, Auto">
                                                                         <TextBlock FontWeight="Medium" FontSize="16" Foreground="#FFF">0 KB/s</TextBlock>
-                                                                        <TextBlock Grid.Row="2" FontWeight="Medium" FontSize="14" Foreground="#545454">Download</TextBlock>
+                                                                        <TextBlock Grid.Row="2" FontWeight="Medium" FontSize="14" Foreground="#545454" Text="{mext:Loc DashBoard-Ui-Stats-Download}"/>
                                                                 </Grid>
                                                         </Grid>
                                                 </Grid>
@@ -100,7 +101,7 @@
                                         <Grid ColumnDefinitions="*, 10, *">
                                                 <Border BorderThickness="1" CornerRadius="25" Padding="14" Background="#1B1B1D">
                                                         <Grid RowDefinitions="Auto, 7, Auto">
-                                                                <TextBlock  FontWeight="Medium" FontSize="14" Foreground="#565658">Location selected</TextBlock>
+                                                                <TextBlock  FontWeight="Medium" FontSize="14" Foreground="#565658" Text="{mext:Loc DashBoard-Ui-LocationSelected}"/>
                                                                 <Grid Grid.Row="2" ColumnDefinitions="Auto, 10, Auto">
                                                                         <Border CornerRadius="25" Width="28" Height="28" ClipToBounds="True">
                                                                                 <Viewbox Width="50" Height="50">
@@ -134,7 +135,7 @@
                                                 
                                                 <Border Grid.Column="2" BorderThickness="1" CornerRadius="25" Padding="14" Background="#1B1B1D">
                                                         <Grid RowDefinitions="Auto, 7, Auto">
-                                                                <TextBlock  FontWeight="Medium" FontSize="14" Foreground="#565658">Mode chosen</TextBlock>
+                                                                <TextBlock  FontWeight="Medium" FontSize="14" Foreground="#565658" Text="{mext:Loc DashBoard-Ui-ModeChosen}"/>
                                                                 <ComboBox SelectedItem="{Binding SelectedMode, Mode=TwoWay}" ItemsSource="{Binding ModesForView}" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectedIndex="0">
                                                                         <ComboBox.Background>
                                                                                 Transparent

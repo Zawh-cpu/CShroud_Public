@@ -6,6 +6,7 @@ using CShroudApp.Core.JsonContexts;
 using CShroudApp.Core.Utils;
 using CShroudApp.Infrastructure.Platforms.Windows.Services;
 using CShroudApp.Infrastructure.Services;
+using CShroudApp.Infrastructure.StaticServices;
 using CShroudApp.Infrastructure.VpnCores.SingBox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +16,12 @@ namespace CShroudApp;
 
 public static class BackendStarter
 {
+    private static IHost? PrestartedHost;
+    
     public static IHost Start(string[] args, ServiceCollection? additionalServices)
     {
+        if (PrestartedHost is not null) return PrestartedHost;
+        
         var builder = new HostApplicationBuilder(args);
         builder.Logging.AddConsole();
 
@@ -47,7 +52,6 @@ public static class BackendStarter
         builder.Services.AddSingleton<IInternalDataManager, InternalDataManager>();
         builder.Services.AddSingleton<IVpnService, VpnService>();
         builder.Services.AddSingleton<IQuickAuthService, QuickAuthService>();
-        builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
 
         builder.Services.AddSingleton<IVpnCore, SingBoxCore>();
 
@@ -55,6 +59,7 @@ public static class BackendStarter
         {
             case Platform.Windows:
                 builder.Services.AddSingleton<IProxyManager, WindowsProxyService>();
+                builder.Services.AddSingleton<IToastManager, WindowsToastManager>();
                 break;
             default:
                 throw new NotSupportedException("Unsupported Platform");
@@ -65,9 +70,9 @@ public static class BackendStarter
                 builder.Services.Add(serviceDescriptor);
         
         var app = builder.Build();
-        var getLocalizationService = app.Services.GetRequiredService<ILocalizationService>();
-        getLocalizationService.CurrentLocalization = cfg.Localization;
-        Console.WriteLine(getLocalizationService.CurrentLocalization);
+        LocalizationService.CurrentLocalization = cfg.Localization;
+        
+        PrestartedHost = app;
         return app;
     }
 }

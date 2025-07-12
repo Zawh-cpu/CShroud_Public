@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.Input;
 using CShroudApp.Application.DTOs;
 using CShroudApp.Core.Entities;
 using CShroudApp.Core.Interfaces;
+using CShroudApp.Infrastructure.Services;
+using CShroudApp.Infrastructure.StaticServices;
 using CShroudApp.Presentation.Ui.Interfaces;
 
 namespace CShroudApp.Presentation.Ui.ViewModels.Auth;
@@ -23,10 +25,9 @@ public partial class QuickLoginViewModel : ViewModelBase
     private readonly IApiRepository _apiRepository;
     private readonly IQuickAuthService _quickAuthService;
     private readonly ISessionManager _sessionManager;
-    private readonly ILocalizationService _localizationService;
     private readonly INotificationManager _notificationManager;
     
-    public QuickLoginViewModel(INavigationService navigationService, IApiRepository apiRepository, IQuickAuthService quickAuthService, ISessionManager sessionManager, ILocalizationService localizationService, INotificationManager notificationManager)
+    public QuickLoginViewModel(INavigationService navigationService, IApiRepository apiRepository, IQuickAuthService quickAuthService, ISessionManager sessionManager, INotificationManager notificationManager)
     {
         _quickAuthService = quickAuthService;
         _quickAuthService.OnSessionCreated += OnSessionCreated;
@@ -37,7 +38,6 @@ public partial class QuickLoginViewModel : ViewModelBase
         _navigationService = navigationService;
         _apiRepository = apiRepository;
         _sessionManager = sessionManager;
-        _localizationService = localizationService;
         _notificationManager = notificationManager;
         
         OpenTelegramCommand = new RelayCommand(() =>
@@ -64,8 +64,8 @@ public partial class QuickLoginViewModel : ViewModelBase
     {
         _notificationManager.AddNotification(new NotificationObject()
         {
-            Title = _localizationService.Translate("ErrorFailedStartQuickAuth"),
-            Message = _localizationService.Translate("ErrorFailedStartQuickAuth-Text"),
+            Title = LocalizationService.Translate("ErrorFailedStartQuickAuth"),
+            Message = LocalizationService.Translate("ErrorFailedStartQuickAuth-Text"),
             Type = NotificationType.Error
         });
     }

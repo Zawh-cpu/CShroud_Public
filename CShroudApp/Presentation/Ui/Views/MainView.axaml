@@ -6,10 +6,11 @@
         mc:Ignorable="d" d:DesignWidth="485" d:DesignHeight="715"
         x:Class="CShroudApp.Presentation.Ui.Views.MainView"
         xmlns:selectors="clr-namespace:CShroudApp.Presentation.Ui.Selectors"
+        xmlns:mext="clr-namespace:CShroudApp.Presentation.Ui.MarkupExtensions"
         x:DataType="vm:MainViewModel"
         x:CompileBindings="True"
         Width="485" Height="715"
-        Icon="/Assets/logo.ico"
+        Icon="avares://CShroudApp/Assets/logo.ico"
         Title="CrimsonShroud"
         Background="#161616">
 
