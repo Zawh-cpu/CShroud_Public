@@ -2,7 +2,7 @@
 
 Desktop-приложение - https://github.com/Zawh-cpu/CShroudApp
 
-
+// Лицензия распространяются так-же и на саб-репозитории
 
 EN:
 
