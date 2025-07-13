@@ -1,6 +1,0 @@
-﻿{
-  "VpnMode-Tun": "VPN",
-  "VpnMode-TunPlusProxy": "VPN&Proxy",
-  "VpnMode-Proxy": "Proxy",
-  "VpnMode-TransparentProxy": "Transparent"
-}
